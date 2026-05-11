@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Onus Express — Intranet Operacional</title>
+<link href="https://fonts.googleapis.com/css2?family=REM:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+:root{
+  --navy:#000935;--navy2:#000c45;--navy3:#00083a;
+  --teal:#00C9CE;--teal2:#00e0e6;--teal3:#00b0b5;
+  --td:rgba(0,201,206,.10);--td2:rgba(0,201,206,.18);--td3:rgba(0,201,206,.28);
+  --white:#ffffff;--text:rgba(232,240,255,.92);--text2:rgba(232,240,255,.55);--text3:rgba(232,240,255,.28);
+  --brd:rgba(0,201,206,.10);--brd2:rgba(0,201,206,.18);--brd3:rgba(0,201,206,.32);
+  --sf:rgba(0,201,206,.05);--sf2:rgba(0,201,206,.09);
+  --r:8px;--r2:12px;--r3:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--navy);color:var(--text);font-family:'REM',sans-serif;font-size:14px;overflow-x:hidden}
+::selection{background:var(--teal);color:var(--navy)}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--td2);border-radius:2px}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 60% 40% at 0% 0%,rgba(0,201,206,.04) 0%,transparent 100%),
+             radial-gradient(ellipse 50% 50% at 100% 100%,rgba(0,201,206,.03) 0%,transparent 100%)}
+.app{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1}
+
+/* SIDEBAR */
+.sb{width:228px;flex-shrink:0;background:rgba(0,7,45,.96);border-right:1px solid var(--brd);display:flex;flex-direction:column}
+.sb-logo{padding:18px 16px 16px;border-bottom:1px solid var(--brd);position:relative}
+.sb-logo::after{content:'';position:absolute;bottom:0;left:16px;right:16px;height:1px;background:linear-gradient(90deg,transparent,var(--teal),transparent);opacity:.5}
+.sb-logo-row{display:flex;align-items:center;gap:11px}
+.sb-mark{width:38px;height:38px;border:1.5px solid var(--teal3);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--td);position:relative}
+.sb-mark-txt{font-weight:800;font-size:13px;color:var(--teal);letter-spacing:-.5px}
+.sb-brand{font-weight:800;font-size:14px;color:var(--white);letter-spacing:-.3px;line-height:1}
+.sb-express{font-weight:300;font-size:8.5px;color:var(--teal);letter-spacing:3.5px;text-transform:uppercase;margin-top:2px}
+.sb-week{font-size:9px;color:var(--text3);padding:11px 16px 3px;letter-spacing:.7px;text-transform:uppercase;font-weight:500}
+.sb-nav{flex:1;padding:6px 8px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+.sni{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--r);cursor:pointer;transition:all .15s;border:1px solid transparent;color:var(--text2);font-size:12px;font-weight:400;position:relative;user-select:none}
+.sni:hover{background:var(--sf);color:var(--text);border-color:var(--brd)}
+.sni.on{background:var(--td);color:var(--teal);border-color:var(--brd2);font-weight:500}
+.sni.on::before{content:'';position:absolute;left:0;top:22%;bottom:22%;width:2px;background:var(--teal);border-radius:1px}
+.ni{font-size:14px;width:16px;text-align:center;flex-shrink:0}
+.nbadge{margin-left:auto;font-size:9px;font-weight:700;padding:1px 6px;border-radius:10px;background:var(--teal);color:var(--navy)}
+.nbadge.w{background:#f59e0b}
+.ssep{height:1px;background:var(--brd);margin:6px 0}
+.slbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;padding:5px 10px 1px;font-weight:500}
+.sb-bot{padding:10px 8px;border-top:1px solid var(--brd)}
+.sb-cfg{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--r);cursor:pointer;color:var(--text3);font-size:11px;border:none;background:transparent;width:100%;font-family:'REM',sans-serif;transition:all .15s}
+.sb-cfg:hover{background:var(--sf);color:var(--text2)}
+.sb-ver{font-size:9px;color:var(--text3);padding:5px 10px 2px;display:flex;align-items:center;gap:5px}
+.pulse{width:5px;height:5px;border-radius:50%;background:var(--teal);animation:pls 2.5s ease-in-out infinite;flex-shrink:0}
+@keyframes pls{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{height:52px;background:rgba(0,7,45,.92);border-bottom:1px solid var(--brd);display:flex;align-items:center;padding:0 20px;gap:10px;flex-shrink:0;position:relative;backdrop-filter:blur(8px)}
+.topbar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,201,206,.3),transparent)}
+.tb-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pls 2s ease-in-out infinite;flex-shrink:0}
+.tb-title{font-weight:700;font-size:14px;color:var(--white);letter-spacing:-.2px}
+.tb-sub{font-size:11px;color:var(--text3);margin-left:5px;font-weight:300}
+.tb-r{margin-left:auto;display:flex;align-items:center;gap:7px}
+.btn{display:flex;align-items:center;gap:5px;padding:6px 13px;border-radius:var(--r);border:1px solid var(--brd2);background:transparent;color:var(--text2);font-size:11px;font-weight:500;cursor:pointer;font-family:'REM',sans-serif;transition:all .15s}
+.btn:hover{background:var(--sf);color:var(--text);border-color:var(--brd3)}
+.btn.p{background:var(--teal);color:var(--navy);border-color:var(--teal);font-weight:700;letter-spacing:.2px}
+.btn.p:hover{background:var(--teal2)}
+.content{flex:1;overflow-y:auto}
+.page{display:none}.page.on{display:block;animation:pi .18s ease}
+@keyframes pi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:16px 20px 0}
+.sc{background:var(--sf);border:1px solid var(--brd);border-radius:var(--r2);padding:15px 17px;position:relative;overflow:hidden;transition:border-color .2s}
+.sc:hover{border-color:var(--brd2)}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:var(--r2) var(--r2) 0 0}
+.sc.t::before{background:var(--teal)}.sc.a::before{background:#f59e0b}
+.sc.b::before{background:#3b82f6}.sc.g::before{background:#10b981}
+.sn{font-weight:700;font-size:28px;line-height:1;letter-spacing:-1px;color:var(--white)}
+.sn.teal{color:var(--teal)}.sn.amb{color:#f59e0b}.sn.blu{color:#3b82f6}.sn.grn{color:#10b981}
+.sl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-top:5px;font-weight:500}
+
+/* FILTERS */
+.fbar{display:flex;align-items:center;gap:6px;padding:11px 20px;flex-wrap:wrap}
+.flbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;font-weight:600;margin-right:2px}
+.fch{font-size:10px;font-weight:500;padding:4px 11px;border-radius:20px;border:1px solid var(--brd);background:transparent;cursor:pointer;color:var(--text2);transition:all .15s;font-family:'REM',sans-serif;white-space:nowrap}
+.fch:hover{border-color:var(--brd2);color:var(--text)}.fch.on{background:var(--td);border-color:var(--brd3);color:var(--teal);font-weight:600}
+.fch.uo{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3);color:#fca5a5;font-weight:600}
+
+/* BOARD */
+.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;padding:0 20px 22px}
+.ch{display:flex;align-items:center;gap:7px;padding:8px 10px;border-radius:var(--r) var(--r) 0 0}
+.cdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dP{background:#f59e0b}.dE{background:#3b82f6}.dC{background:#10b981}.dB{background:rgba(232,240,255,.28)}
+.cn{font-size:11px;font-weight:600;color:var(--text2);flex:1}
+.cc{font-size:9px;font-weight:700;padding:1px 7px;border-radius:10px}
+.ccP{background:rgba(245,158,11,.15);color:#fcd34d}.ccE{background:rgba(59,130,246,.15);color:#93c5fd}
+.ccC{background:rgba(16,185,129,.15);color:#6ee7b7}.ccB{background:rgba(148,163,184,.1);color:var(--text2)}
+.cbody{background:rgba(0,9,53,.5);border:1px solid var(--brd);border-top:none;border-radius:0 0 var(--r2) var(--r2);padding:8px;min-height:150px;display:flex;flex-direction:column;gap:7px}
+.cempty{text-align:center;padding:24px 8px;color:var(--text3);font-size:11px}
+
+/* CARD */
+.card{background:var(--sf);border:1px solid var(--brd);border-radius:var(--r);padding:11px 12px;cursor:pointer;transition:all .18s;border-left:3px solid transparent;position:relative}
+.card:hover{background:var(--sf2);border-color:var(--brd2);transform:translateY(-1px)}
+.cdept{font-size:9px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;margin-bottom:5px;display:flex;align-items:center;gap:5px}
+.ctit{font-size:12px;line-height:1.45;color:var(--text);margin-bottom:7px;font-weight:400}
+.cfoot{display:flex;align-items:center;justify-content:space-between}
+.av{width:19px;height:19px;border-radius:50%;background:var(--td);border:1px solid var(--brd2);font-size:8px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--teal)}
+.cresp{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3)}
+.pr{font-size:9px;font-weight:700;padding:2px 7px;border-radius:7px}
+.pU{background:rgba(239,68,68,.14);color:#fca5a5;border:1px solid rgba(239,68,68,.22)}
+.pA{background:rgba(245,158,11,.12);color:#fcd34d;border:1px solid rgba(245,158,11,.18)}
+.pM{background:rgba(59,130,246,.12);color:#93c5fd;border:1px solid rgba(59,130,246,.18)}
+.pB{background:rgba(16,185,129,.10);color:#6ee7b7;border:1px solid rgba(16,185,129,.18)}
+.cdate{font-size:9px;color:var(--text3);margin-top:6px}
+.blkdot{position:absolute;top:9px;right:9px;width:5px;height:5px;border-radius:50%;background:#ef4444}
+
+/* DEPT */
+.dp{padding:14px 20px;display:flex;flex-direction:column;gap:9px}
+.dblk{background:var(--sf);border:1px solid var(--brd);border-radius:var(--r2);overflow:hidden;transition:border-color .15s}
+.dblk:hover{border-color:var(--brd2)}
+.dhdr{display:flex;align-items:center;gap:10px;padding:12px 15px;cursor:pointer;transition:background .15s;border-left:3px solid transparent}
+.dhdr:hover{background:var(--sf2)}
+.ddot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.dname{font-weight:600;font-size:13px;flex:1;color:var(--text)}
+.dbdg{font-size:9px;padding:2px 8px;border-radius:10px;font-weight:700}
+.durg{background:rgba(239,68,68,.14);color:#fca5a5;border:1px solid rgba(239,68,68,.22)}
+.dcnt{background:var(--td);color:var(--teal);border:1px solid var(--brd2)}
+.dbody{display:none}.dbody.op{display:block}
+.dtable{width:100%;border-collapse:collapse}
+.dtable th{background:rgba(0,9,53,.6);padding:6px 15px;text-align:left;font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;border-top:1px solid var(--brd)}
+.dtable td{padding:9px 15px;border-top:1px solid var(--brd);font-size:12px;color:var(--text2);vertical-align:middle}
+.dtable tr:hover td{background:var(--sf2);cursor:pointer}
+.tm{color:var(--text)!important}.stP{color:#f59e0b}.stE{color:#3b82f6}.stC{color:#10b981}.stB{color:var(--text3)}
+
+/* RESUMEN */
+.rw{padding:16px 20px}
+.rtit{font-weight:700;font-size:15px;color:var(--white);letter-spacing:-.3px;margin-bottom:14px}
+.rg{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
+.rc{background:var(--sf);border:1px solid var(--brd);border-radius:var(--r2);padding:16px;transition:border-color .15s}
+.rc:hover{border-color:var(--brd2)}
+.rdrow{display:flex;align-items:center;gap:8px;margin-bottom:11px}
+.rddot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.rdname{font-weight:600;font-size:13px;flex:1}
+.ptrack{height:3px;background:rgba(0,201,206,.1);border-radius:2px;overflow:hidden;margin-bottom:8px}
+.pfill{height:100%;border-radius:2px;transition:width .5s ease}
+.rnums{display:flex;gap:14px}
+.rnum{font-size:10px;color:var(--text3);font-weight:300}
+.rnum strong{color:var(--text2);font-weight:600}
+
+/* CARGA */
+.cw{max-width:660px;margin:0 auto;padding:20px}
+.cc2{background:var(--sf);border:1px solid var(--brd);border-radius:var(--r3);padding:28px}
+.ctitle{font-weight:700;font-size:17px;color:var(--white);letter-spacing:-.3px;margin-bottom:6px}
+.csub{font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:22px;font-weight:300}
+.bx-warn{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.18);border-radius:var(--r);padding:13px 15px;margin-bottom:16px}
+.bx-warn h3{font-size:9px;font-weight:700;color:#fcd34d;margin-bottom:7px;text-transform:uppercase;letter-spacing:.6px}
+.bx-warn ol{padding-left:15px}.bx-warn li{font-size:12px;color:var(--text2);line-height:1.75;font-weight:300}.bx-warn li strong{color:var(--text);font-weight:600}
+.bx-teal{background:rgba(0,201,206,.05);border:1px solid var(--brd2);border-radius:var(--r);padding:13px 15px;margin-bottom:16px}
+.bx-teal h3{font-size:9px;font-weight:700;color:var(--teal);margin-bottom:7px;text-transform:uppercase;letter-spacing:.6px}
+.api-r{display:flex;gap:8px;margin-top:6px}
+.ai{flex:1;padding:7px 11px;background:rgba(0,9,53,.6);border:1px solid var(--brd2);border-radius:var(--r);font-family:'REM',monospace;font-size:11px;color:var(--text);outline:none;transition:border-color .15s}
+.ai:focus{border-color:var(--teal)}
+.as{padding:7px 14px;background:var(--teal);color:var(--navy);border:none;border-radius:var(--r);font-size:11px;font-weight:700;cursor:pointer;font-family:'REM',sans-serif;transition:opacity .15s}
+.as:hover{opacity:.85}
+.aok{font-size:10px;color:var(--teal);margin-top:5px;font-weight:500;display:none}
+.fl{display:block;font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px}
+.bta{width:100%;min-height:175px;padding:13px;background:rgba(0,9,53,.6);border:1px solid var(--brd);border-radius:var(--r);font-family:'REM',sans-serif;font-size:11px;color:var(--text);resize:vertical;outline:none;line-height:1.7;transition:border-color .15s;font-weight:300}
+.bta:focus{border-color:var(--brd2)}.bta::placeholder{color:var(--text3)}
+.pb{width:100%;padding:12px;border-radius:var(--r2);background:var(--teal);color:var(--navy);border:none;font-family:'REM',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:9px;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:.2px}
+.pb:hover{background:var(--teal2);transform:translateY(-1px)}.pb:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.spin{width:14px;height:14px;border:2px solid rgba(0,9,53,.3);border-top-color:var(--navy);border-radius:50%;animation:sp .65s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.rb{margin-top:16px;background:rgba(0,9,53,.6);border:1px solid rgba(0,201,206,.2);border-radius:var(--r2);padding:15px;display:none}
+.rb.sh{display:block}
+.rtl{font-size:12px;font-weight:700;color:var(--teal);margin-bottom:11px;letter-spacing:.2px}
+.tprevs{display:flex;flex-direction:column;gap:6px}
+.tp{background:var(--sf);border:1px solid var(--brd);border-radius:var(--r);padding:9px 12px;display:flex;align-items:center;gap:9px}
+.tpdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.tptit{font-size:12px;flex:1;color:var(--text);font-weight:400}
+.tpdept{font-size:9px;font-weight:700;padding:2px 6px;border-radius:6px;text-transform:uppercase;letter-spacing:.4px}
+.ib{width:100%;padding:10px;border-radius:var(--r);background:var(--td);color:var(--teal);border:1px solid var(--brd2);font-family:'REM',sans-serif;font-size:12px;font-weight:700;cursor:pointer;margin-top:11px;transition:all .15s;letter-spacing:.2px}
+.ib:hover{background:var(--td2);border-color:var(--brd3)}
+
+/* CONFIG */
+.cfgw{max-width:620px;margin:0 auto;padding:20px}
+.cfgs{background:var(--sf);border:1px solid var(--brd);border-radius:var(--r2);padding:21px;margin-bottom:13px}
+.cfgs h2{font-weight:700;font-size:13px;color:var(--teal);margin-bottom:14px;letter-spacing:.2px;display:flex;align-items:center;gap:8px}
+.cfgs h2::before{content:'';width:2px;height:13px;background:var(--teal);border-radius:1px;flex-shrink:0}
+.cfg2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cff{margin-bottom:11px}
+.cff label{display:block;font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.cfi{width:100%;padding:8px 11px;background:rgba(0,9,53,.6);border:1px solid var(--brd);border-radius:var(--r);font-family:'REM',sans-serif;font-size:12px;color:var(--text);outline:none;transition:border-color .15s;font-weight:300}
+.cfi:focus{border-color:var(--teal)}
+.csb{padding:8px 18px;background:var(--teal);color:var(--navy);border:none;border-radius:var(--r);font-size:11px;font-weight:700;cursor:pointer;font-family:'REM',sans-serif;transition:opacity .15s;letter-spacing:.2px}
+.csb:hover{opacity:.85}
+.cfginfo{background:rgba(0,201,206,.05);border:1px solid var(--brd2);border-radius:var(--r);padding:10px 12px;font-size:11px;color:var(--teal);line-height:1.65;margin-bottom:13px;font-weight:300}
+.em{display:flex;flex-direction:column;gap:7px}
+.er{display:grid;grid-template-columns:105px 1fr;gap:8px;align-items:center}
+.el{font-size:11px;color:var(--text2);font-weight:500}
+.avc{display:flex;flex-direction:column;gap:9px}
+.avi{display:flex;align-items:center;gap:9px;cursor:pointer;font-size:12px;color:var(--text2)}
+.avi input{accent-color:var(--teal);width:13px;height:13px}
+.avi strong{color:var(--text);font-weight:600}
+
+/* MODAL */
+.ov{display:none;position:fixed;inset:0;background:rgba(0,5,25,.8);z-index:300;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px)}
+.ov.op{display:flex;animation:fadeIn .15s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--navy2);border:1px solid var(--brd2);border-radius:var(--r3);width:min(530px,100%);max-height:88vh;overflow-y:auto;padding:24px;position:relative}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--teal),transparent);border-radius:var(--r3) var(--r3) 0 0}
+.mtop{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px}
+.mttl{font-weight:700;font-size:15px;line-height:1.4;flex:1;padding-right:13px;color:var(--white);letter-spacing:-.2px}
+.mcls{width:28px;height:28px;border-radius:var(--r);border:1px solid var(--brd2);background:var(--sf);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;color:var(--text2);flex-shrink:0;transition:all .15s}
+.mcls:hover{background:var(--sf2);color:var(--text)}
+.mf{margin-bottom:13px}
+.mf label{display:block;font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.mv{background:rgba(0,9,53,.5);border:1px solid var(--brd);border-radius:var(--r);padding:8px 11px;font-size:12px;color:var(--text2);line-height:1.5;font-weight:300}
+.mv.blk{background:rgba(239,68,68,.06);border-color:rgba(239,68,68,.22);color:#fca5a5}
+.ms,.mi,.mta{width:100%;padding:8px 11px;background:rgba(0,9,53,.6);border:1px solid var(--brd);border-radius:var(--r);font-family:'REM',sans-serif;font-size:12px;color:var(--text);outline:none;transition:border-color .15s;font-weight:300}
+.ms:focus,.mi:focus,.mta:focus{border-color:var(--teal)}.ms option{background:var(--navy)}.mta{resize:vertical;line-height:1.6}
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mdbrow{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:16px}
+.mdba{display:inline-flex;align-items:center;gap:5px;font-size:9px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:3px 10px;border-radius:20px}
+.msave{width:100%;padding:11px;border-radius:var(--r);background:var(--teal);color:var(--navy);border:none;font-family:'REM',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-top:7px;transition:all .15s;letter-spacing:.2px}
+.msave:hover{background:var(--teal2);transform:translateY(-1px)}
+
+/* TOAST */
+.tw{position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:7px;z-index:500;pointer-events:none}
+.toast{background:var(--navy2);border:1px solid var(--brd2);border-radius:var(--r);padding:10px 14px;font-size:12px;color:var(--text);display:flex;align-items:center;gap:8px;animation:ti .22s ease;pointer-events:auto;min-width:240px;font-weight:400}
+.toast.ts{border-left:3px solid var(--teal)}.toast.tw2{border-left:3px solid #f59e0b}.toast.te{border-left:3px solid #ef4444}
+@keyframes ti{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sb">
+    <div class="sb-logo">
+      <div class="sb-logo-row">
+        <div class="sb-mark"><span class="sb-mark-txt">OE</span></div>
+        <div><div class="sb-brand">ONUS</div><div class="sb-express">EXPRESS</div></div>
+      </div>
+    </div>
+    <div class="sb-week" id="sbweek"></div>
+    <nav class="sb-nav">
+      <div class="sni on" onclick="gp('kanban',this)"><span class="ni">⊞</span>Tablero Kanban<span class="nbadge" id="buru" style="display:none"></span></div>
+      <div class="sni" onclick="gp('departamentos',this)"><span class="ni">◫</span>Departamentos</div>
+      <div class="sni" onclick="gp('resumen',this)"><span class="ni">◈</span>Resumen ejecutivo</div>
+      <div class="ssep"></div>
+      <div class="slbl">Operaciones</div>
+      <div class="sni" onclick="gp('carga',this)"><span class="ni">⊕</span>Cargar reunión<span class="nbadge" id="bia" style="display:none">IA</span></div>
+    </nav>
+    <div class="sb-bot">
+      <button class="sb-cfg" onclick="gp('config',null)"><span>⚙</span>Configuración</button>
+      <div class="sb-ver"><span class="pulse"></span>Sistema activo · v1.0</div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="tb-dot"></div>
+      <div><span class="tb-title" id="ttl">Tablero Kanban</span><span class="tb-sub" id="tsub"></span></div>
+      <div class="tb-r">
+        <button class="btn" onclick="gp('carga',null)">⊕ Nueva reunión</button>
+        <button class="btn p" onclick="nuevaTarea()">+ Añadir tarea</button>
+      </div>
+    </div>
+    <div class="content">
+      <div class="page on" id="page-kanban">
+        <div class="stats" id="stats"></div>
+        <div class="fbar" id="fbar"></div>
+        <div class="board" id="board"></div>
+      </div>
+      <div class="page" id="page-departamentos"><div class="dp" id="dpage"></div></div>
+      <div class="page" id="page-resumen"><div class="rw"><div class="rtit">Resumen ejecutivo</div><div class="rg" id="rg"></div></div></div>
+      <div class="page" id="page-carga">
+        <div class="cw"><div class="cc2">
+          <div class="ctitle">Cargar reunión semanal</div>
+          <div class="csub">Pega el resumen de NotebookLM o el texto escrito a mano. La IA extrae y estructura todas las tareas automáticamente.</div>
+          <div class="bx-warn">
+            <h3>📋 Instrucciones — responsable de actas</h3>
+            <ol>
+              <li>Graba o transcribe la reunión con <strong>NotebookLM</strong></li>
+              <li>Copia el texto del resumen y pégalo abajo</li>
+              <li>Pulsa <strong>Procesar con IA</strong> — extrae todas las tareas</li>
+              <li>Revisa las tarjetas y pulsa <strong>Importar al tablero</strong></li>
+              <li>El sistema enviará los avisos automáticos al equipo</li>
+            </ol>
+          </div>
+          <div class="bx-teal">
+            <h3>🔑 API Key Anthropic — solo una vez</h3>
+            <div style="font-size:11px;color:var(--text2);font-weight:300;margin-bottom:4px">Se guarda solo en este navegador.</div>
+            <div class="api-r">
+              <input class="ai" type="password" id="apikey" placeholder="sk-ant-api03-...">
+              <button class="as" onclick="saveKey()">Guardar</button>
+            </div>
+            <div class="aok" id="aok">✓ API Key configurada</div>
+          </div>
+          <div class="mf" style="margin-bottom:9px">
+            <label class="fl">Resumen de la reunión</label>
+            <textarea class="bta" id="rein" placeholder="Pega aquí el texto del resumen...&#10;&#10;Ejemplo:&#10;— Junior gestionará la licencia de Barcelona antes del 26 de mayo, urgente.&#10;— Diana portará las líneas a Orange esta semana.&#10;— Yamir ejecuta pagos de talleres el jueves."></textarea>
+          </div>
+          <button class="pb" id="pb" onclick="procIA()">
+            <span id="pbtxt">⚡ Procesar con IA</span>
+            <span id="pbspin" style="display:none;align-items:center;gap:7px"><span class="spin"></span>Analizando reunión...</span>
+          </button>
+          <div class="rb" id="rb">
+            <div class="rtl">✓ Tareas detectadas — revisa antes de importar</div>
+            <div class="tprevs" id="tprevs"></div>
+            <button class="ib" onclick="importar()">↑ Importar todas al tablero</button>
+          </div>
+        </div></div>
+      </div>
+      <div class="page" id="page-config">
+        <div class="cfgw">
+          <div class="cfgs">
+            <h2>EmailJS — Avisos automáticos</h2>
+            <div class="cfginfo">Crea cuenta gratuita en <strong>emailjs.com</strong> (200 emails/mes). Conecta tu Gmail, crea las plantillas y pega los IDs aquí.</div>
+            <div class="cfg2">
+              <div class="cff"><label>Public Key</label><input class="cfi" id="cpk" placeholder="Tu Public Key"></div>
+              <div class="cff"><label>Service ID</label><input class="cfi" id="csvc" placeholder="service_xxxxxxx"></div>
+            </div>
+            <div class="cfg2">
+              <div class="cff"><label>Template — Completada</label><input class="cfi" id="ctd" placeholder="template_xxxxxxx"></div>
+              <div class="cff"><label>Template — Recordatorio</label><input class="cfi" id="ctr" placeholder="template_xxxxxxx"></div>
+            </div>
+            <div class="cff"><label>Email supervisor (recibe todos los avisos)</label><input class="cfi" id="csup" placeholder="junior@onusexpress.com"></div>
+            <button class="csb" onclick="saveCfg()">Guardar configuración</button>
+          </div>
+          <div class="cfgs">
+            <h2>Correos del equipo</h2>
+            <div class="em" id="emap"></div>
+            <div style="margin-top:13px"><button class="csb" onclick="saveMails()">Guardar correos</button></div>
+          </div>
+          <div class="cfgs">
+            <h2>Reglas de aviso automático</h2>
+            <div class="avc">
+              <label class="avi"><input type="checkbox" id="avd" checked>Enviar email al supervisor cuando una tarea se marque como <strong>Completada</strong></label>
+              <label class="avi"><input type="checkbox" id="avb" checked>Enviar email al supervisor cuando una tarea quede <strong>Bloqueada</strong></label>
+              <label class="avi"><input type="checkbox" id="avm" checked>Enviar recordatorio de urgentes los <strong>lunes al abrir la app</strong></label>
+            </div>
+            <div style="margin-top:14px"><button class="csb" onclick="saveAv()">Guardar reglas</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="ov" id="ov" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="mtop"><div class="mttl" id="mttl">Tarea</div><button class="mcls" onclick="closeModal()">✕</button></div>
+    <div id="mbody"></div>
+  </div>
+</div>
+<div class="tw" id="tw"></div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// BRAND & DATOS
+// ═══════════════════════════════════════════════════
+const DEPTS={
+  "Operaciones":"#3b82f6","Comercial":"#00C9CE","Administración":"#f59e0b",
+  "RRHH":"#ef4444","Flota":"#8b5cf6","Marketing-Tech":"#06b6d4",
+  "Operaciones Locales":"#f97316","Atención Cliente":"#10b981"
+};
+const PK={Urgente:'U',Alta:'A',Media:'M',Baja:'B'};
+const COLS=[{k:'Pendiente',d:'dP',c:'ccP'},{k:'En progreso',d:'dE',c:'ccE'},{k:'Completado',d:'dC',c:'ccC'},{k:'Bloqueado',d:'dB',c:'ccB'}];
+const RESPS=['Junior','Diana','Sebas','María','Marta','Yamir','Patricia','Ricardo','Elio','Andrea','Marlon','Anderson','Miguel','Sebastián','Juanma','José','Miguel Ángel'];
+
+let TAREAS=[
+  {id:1,dept:"Operaciones",titulo:"Licencia actividades Barcelona/Tarragona",resp:"Junior",prio:"Urgente",estado:"Pendiente",fecha:"26/05/2025",accion:"Firmar contrato Tarragona y enviar doc al bróker (100€+IVA, 15 días)",bloqueos:"Contrato sin firmar",notas:""},
+  {id:2,dept:"Operaciones",titulo:"Pack Barcelona – repartidores y documentación",resp:"Junior",prio:"Urgente",estado:"Pendiente",fecha:"12/05/2025",accion:"Revisar ofertas y enviar doc de 2 repartidores urgente o cambiarlos",bloqueos:"Faltan repartidores",notas:""},
+  {id:3,dept:"Operaciones",titulo:"Flujo operativo Almacén Bonfreu",resp:"Junior",prio:"Alta",estado:"Pendiente",fecha:"19/05/2025",accion:"Crear flujo operativo con almacén externo",bloqueos:"",notas:""},
+  {id:4,dept:"Operaciones",titulo:"Facturación pre-vacaciones",resp:"Junior",prio:"Media",estado:"Pendiente",fecha:"",accion:"Dejar facturación adelantada antes de vacaciones",bloqueos:"",notas:""},
+  {id:5,dept:"Comercial",titulo:"Correos Express – reclutamiento",resp:"Sebas",prio:"Alta",estado:"En progreso",fecha:"12/05/2025",accion:"Seguir llamando candidatos; concretar cliente hoy",bloqueos:"Tarifas bajas",notas:""},
+  {id:6,dept:"Comercial",titulo:"GLS Alicante – reunión de cierre",resp:"Junior",prio:"Alta",estado:"Pendiente",fecha:"12/05/2025",accion:"Contactar a Enrique hoy y fijar fecha de inicio",bloqueos:"",notas:""},
+  {id:7,dept:"Comercial",titulo:"Celeritas Irún – rutas del norte",resp:"Junior",prio:"Urgente",estado:"En progreso",fecha:"13/05/2025",accion:"Un perfil ayer, otro mañana; Junior gestiona 3.º; Recruiting urgente",bloqueos:"Falta apoyo rutas norte",notas:""},
+  {id:8,dept:"Comercial",titulo:"Segur de Cádiz – propuesta tarifaria",resp:"Juanma",prio:"Media",estado:"En progreso",fecha:"",accion:"Esperar respuesta propuesta económica de Juanma",bloqueos:"",notas:""},
+  {id:9,dept:"Comercial",titulo:"Proyecto Cainiao / Tipsa – base de datos",resp:"Miguel",prio:"Alta",estado:"Pendiente",fecha:"",accion:"Presentar proyecto filtrado BD; 1.000 contactos a cambio de BD mensajeros",bloqueos:"",notas:""},
+  {id:10,dept:"Comercial",titulo:"Tipsa Vitoria – 2 mensajeros urgentes",resp:"Anderson",prio:"Urgente",estado:"Pendiente",fecha:"12/05/2025",accion:"Contactar Anderson Caicedo para captación urgente",bloqueos:"",notas:""},
+  {id:11,dept:"Administración",titulo:"Portabilidad líneas a Orange",resp:"Diana",prio:"Media",estado:"Pendiente",fecha:"",accion:"Gestionar portabilidad para unificar servicio",bloqueos:"Bloquea la centralita",notas:""},
+  {id:12,dept:"Administración",titulo:"Cambio titularidad Prosegur Córdoba",resp:"Ricardo",prio:"Alta",estado:"Pendiente",fecha:"16/05/2025",accion:"Ejecutar cambio de titularidad esta semana",bloqueos:"",notas:""},
+  {id:13,dept:"Administración",titulo:"Albaranes Ader / Mensajería La Selva",resp:"Diana",prio:"Urgente",estado:"Pendiente",fecha:"",accion:"Buscar albaranes perdidos (mudanza Montmeló); evaluar denuncia",bloqueos:"Cuentas bloqueadas en Asnef",notas:""},
+  {id:14,dept:"Administración",titulo:"Alojamiento Francia – hotel urgente",resp:"Patricia",prio:"Urgente",estado:"Pendiente",fecha:"13/05/2025",accion:"Buscar hotel urgente para cubrir 2 días",bloqueos:"Obra retrasada; hotel actual termina",notas:""},
+  {id:15,dept:"Administración",titulo:"Plataformas CAE – perfiles MRV/GLS/PAT",resp:"María",prio:"Alta",estado:"En progreso",fecha:"31/05/2025",accion:"Culminar subida de perfiles; validar con Junior antes de fin de mes",bloqueos:"",notas:""},
+  {id:16,dept:"Administración",titulo:"Siniestro Mallorca – notificación 1.000€",resp:"María",prio:"Alta",estado:"Pendiente",fecha:"01/06/2025",accion:"Solicitar info a Norge; respuesta legal en plazo de 20 días",bloqueos:"",notas:""},
+  {id:17,dept:"Administración",titulo:"Demandas Córdoba – ex-trabajadores MRV",resp:"Diana",prio:"Urgente",estado:"En progreso",fecha:"",accion:"Gestión conjunta con abogados; responsabilidad en Diana y María",bloqueos:"",notas:""},
+  {id:18,dept:"RRHH",titulo:"Traspaso RRHH – Patricia nueva responsable",resp:"Marta",prio:"Alta",estado:"Pendiente",fecha:"",accion:"Crear flujo comunicación; incidencias por escrito, no llamadas",bloqueos:"",notas:""},
+  {id:19,dept:"RRHH",titulo:"Contratos Francia – extensiones a vencer",resp:"Marta",prio:"Alta",estado:"Pendiente",fecha:"",accion:"Hablar con Lev para gestionar extensiones",bloqueos:"",notas:""},
+  {id:20,dept:"Flota",titulo:"Pagos talleres – ejecución jueves",resp:"Yamir",prio:"Alta",estado:"Pendiente",fecha:"15/05/2025",accion:"Ejecutar pagos cada jueves para mantener talleres activos",bloqueos:"Talleres exigen pago adelantado",notas:""},
+  {id:21,dept:"Flota",titulo:"Venta furgonetas – precio elevado",resp:"Yamir",prio:"Media",estado:"Pendiente",fecha:"",accion:"Evaluar reducción de precio o financiamiento",bloqueos:"",notas:""},
+  {id:22,dept:"Flota",titulo:"Furgoneta HTV – desguace",resp:"Marlon",prio:"Media",estado:"Pendiente",fecha:"",accion:"Marlon desmonta cajón; chasis y motor al desguace; baja seguro",bloqueos:"",notas:""},
+  {id:23,dept:"Marketing-Tech",titulo:"Feria SIL – presupuesto y campañas",resp:"Sebastián",prio:"Urgente",estado:"En progreso",fecha:"",accion:"Cerrar presupuesto urgente con Diana y Miguel para activar campañas",bloqueos:"Presupuesto sin cerrar",notas:"Mobiliario y mockups en curso"},
+  {id:24,dept:"Marketing-Tech",titulo:"Pruebas operativa envío directo",resp:"Sebastián",prio:"Media",estado:"Pendiente",fecha:"",accion:"Realizar pruebas en cuanto Pedro dé aprobación",bloqueos:"Pendiente aprobación Pedro",notas:""},
+  {id:25,dept:"Marketing-Tech",titulo:"Plataforma mensajeros – creación perfiles",resp:"Sebastián",prio:"Alta",estado:"Pendiente",fecha:"",accion:"Crear perfiles; mensajeros suben su propia documentación",bloqueos:"",notas:""},
+  {id:26,dept:"Operaciones Locales",titulo:"Tarragona – sustitución mensajeros",resp:"Elio",prio:"Alta",estado:"En progreso",fecha:"",accion:"Elio y Andrea sustituyen paulatinamente a los problemáticos",bloqueos:"",notas:""},
+  {id:27,dept:"Operaciones Locales",titulo:"Tarragona – mudanza nave Ri Clar",resp:"Junior",prio:"Urgente",estado:"Pendiente",fecha:"01/06/2025",accion:"Operar en Ri Clar el 1 jun; confirmar internet; baja nave Riudoms",bloqueos:"Verificar cobertura internet",notas:""},
+  {id:28,dept:"Operaciones Locales",titulo:"Tarragona – deuda bandas 2.000€",resp:"Miguel Ángel",prio:"Alta",estado:"Pendiente",fecha:"",accion:"Llamar para asumir problema y negociar pago del 50%",bloqueos:"Envío perdido frena pago central",notas:""},
+  {id:29,dept:"Operaciones Locales",titulo:"Lugo – cobertura sábados",resp:"José",prio:"Alta",estado:"Pendiente",fecha:"",accion:"Pactar con José como fijo en fines de semana; remunerar a Alberto",bloqueos:"Pablo dejó 30 envíos sin entregar",notas:""},
+  {id:30,dept:"Atención Cliente",titulo:"Centralita – flyers y desvíos",resp:"Junior",prio:"Media",estado:"Pendiente",fecha:"",accion:"Entregar flyers; configurar centralita con desvíos MRV y Celeritas",bloqueos:"Paralizada hasta mudanza Orange",notas:""},
+];
+let nid=31,fDept='todos',fUrg=false,buf=[],prevEst={};
+
+// ═══ UTILS ═══════════════════════════════════════════
+function pk(p){return PK[p]||'M'}
+function clr(d){return DEPTS[d]||'#00C9CE'}
+function ini(s){return(s||'').split(/[\s\/\-,]+/).slice(0,2).map(w=>(w[0]||'').toUpperCase()).join('')}
+function toast(msg,c='ts'){
+  const w=document.getElementById('tw'),el=document.createElement('div');
+  el.className=`toast ${c}`;el.textContent=msg;w.appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .3s';setTimeout(()=>el.remove(),320)},3500);
+}
+
+// ═══ EMAILJS ═════════════════════════════════════════
+const KC='oe_cfg',KM='oe_mls',KA='oe_avs';
+const gc=()=>JSON.parse(localStorage.getItem(KC)||'{}');
+const gm=()=>JSON.parse(localStorage.getItem(KM)||'{}');
+const ga=()=>JSON.parse(localStorage.getItem(KA)||'{"d":true,"b":true,"m":true}');
+function initEJS(){const c=gc();if(c.pk){try{emailjs.init(c.pk)}catch(e){}}}
+
+async function sendEmail(tipo,t){
+  const c=gc(),av=ga();
+  if(!c.pk||!c.svc)return;
+  if(tipo==='d'&&!av.d)return;
+  if(tipo==='b'&&!av.b)return;
+  const tmpl=tipo==='d'?c.td:c.tr;if(!tmpl)return;
+  const now=new Date().toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'});
+  try{
+    await emailjs.send(c.svc,tmpl,{
+      supervisor:c.sup||'',to_email:c.sup||'',
+      responsable:t.resp,tarea_titulo:t.titulo,departamento:t.dept,
+      prioridad:t.prio,estado:t.estado,fecha_limite:t.fecha||'—',
+      accion:t.accion||'—',notas:t.notas||'—',
+      fecha_cambio:now,url_tablero:window.location.href
+    });
+    toast('📧 Aviso enviado por email','ts');
+  }catch(e){console.warn(e)}
+}
+
+function chkLunes(){
+  const av=ga();if(!av.m)return;
+  const h=new Date();if(h.getDay()!==1)return;
+  const lk='oe_ln_'+h.toDateString();if(localStorage.getItem(lk))return;
+  const urg=TAREAS.filter(t=>t.prio==='Urgente'&&t.estado!=='Completado');if(!urg.length)return;
+  const c=gc();if(!c.pk||!c.svc||!c.tr)return;
+  emailjs.send(c.svc,c.tr,{
+    supervisor:c.sup||'',to_email:c.sup||'',
+    num_urgentes:urg.length,lista_tareas:urg.map(t=>`• ${t.titulo} — ${t.resp}`).join('\n'),
+    fecha_cambio:h.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'}),
+    url_tablero:window.location.href,
+    tarea_titulo:`${urg.length} tarea(s) urgentes pendientes`,
+    departamento:'Varios',responsable:'Equipo',prioridad:'Urgente',
+    estado:'Pendiente',fecha_limite:'—',accion:'—',notas:'—'
+  }).then(()=>{localStorage.setItem(lk,'1');toast(`🔔 Recordatorio: ${urg.length} urgentes`,'tw2')}).catch(()=>{});
+}
+
+// ═══ INIT ═════════════════════════════════════════════
+function init(){
+  const d=new Date();
+  document.getElementById('sbweek').textContent='Semana '+d.toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'});
+  const k=localStorage.getItem('oe_key');
+  if(k){document.getElementById('apikey').value=k;document.getElementById('aok').style.display='block';document.getElementById('bia').style.display='';}
+  const c=gc();
+  if(c.pk)document.getElementById('cpk').value=c.pk;
+  if(c.svc)document.getElementById('csvc').value=c.svc;
+  if(c.td)document.getElementById('ctd').value=c.td;
+  if(c.tr)document.getElementById('ctr').value=c.tr;
+  if(c.sup)document.getElementById('csup').value=c.sup;
+  const av=ga();
+  document.getElementById('avd').checked=av.d!==false;
+  document.getElementById('avb').checked=av.b!==false;
+  document.getElementById('avm').checked=av.m!==false;
+  renderEmap();initEJS();renderBoard();updUrg();
+  setTimeout(chkLunes,2000);
+}
+
+// ═══ NAV ══════════════════════════════════════════════
+const PTIT={kanban:'Tablero Kanban',departamentos:'Por Departamento',resumen:'Resumen Ejecutivo',carga:'Cargar Reunión',config:'Configuración'};
+function gp(name,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.sni').forEach(n=>n.classList.remove('on'));
+  document.getElementById('page-'+name).classList.add('on');
+  if(el)el.classList.add('on');
+  document.getElementById('ttl').textContent=PTIT[name]||name;
+  if(name==='departamentos')renderDepts();
+  if(name==='resumen')renderResumen();
+  if(name==='kanban')renderBoard();
+}
+
+// ═══ KANBAN ═══════════════════════════════════════════
+function tv(){
+  let t=TAREAS;
+  if(fDept!=='todos')t=t.filter(x=>x.dept===fDept);
+  if(fUrg)t=t.filter(x=>x.prio==='Urgente'&&x.estado!=='Completado');
+  return t;
+}
+function updUrg(){
+  const n=TAREAS.filter(t=>t.prio==='Urgente'&&t.estado!=='Completado').length;
+  const b=document.getElementById('buru');b.textContent=n;b.style.display=n?'':'none';
+}
+function renderBoard(){
+  const vis=tv();
+  const cnt={'Pendiente':0,'En progreso':0,'Completado':0,'Bloqueado':0};
+  vis.forEach(t=>{if(cnt[t.estado]!==undefined)cnt[t.estado]++});
+  document.getElementById('stats').innerHTML=[
+    {n:vis.length,l:'Total',cls:'t',nc:'teal'},{n:cnt['Pendiente'],l:'Pendientes',cls:'a',nc:'amb'},
+    {n:cnt['En progreso'],l:'En progreso',cls:'b',nc:'blu'},{n:cnt['Completado'],l:'Completadas',cls:'g',nc:'grn'}
+  ].map(s=>`<div class="sc ${s.cls}"><div class="sn ${s.nc}">${s.n}</div><div class="sl">${s.l}</div></div>`).join('');
+  const depts=['todos',...Object.keys(DEPTS)];
+  document.getElementById('fbar').innerHTML=
+    `<span class="flbl">Filtrar:</span>`+
+    depts.map(d=>`<button class="fch ${d===fDept&&!fUrg?'on':''}" onclick="sf('${d}',this)">${d==='todos'?'Todos':d}</button>`).join('')+
+    `<button class="fch ${fUrg?'uo':''}" onclick="tu(this)">⚡ Urgentes</button>`;
+  document.getElementById('board').innerHTML=COLS.map(col=>{
+    const cards=vis.filter(t=>t.estado===col.k);
+    return`<div><div class="ch"><span class="cdot ${col.d}"></span><span class="cn">${col.k}</span><span class="cc ${col.c}">${cards.length}</span></div>
+    <div class="cbody">${cards.length?cards.map(rc).join(''):'<div class="cempty">— Sin tareas —</div>'}</div></div>`;
+  }).join('');
+}
+function rc(t){
+  const c=clr(t.dept);
+  return`<div class="card" style="border-left-color:${c}" onclick="openModal(${t.id})">
+    ${t.bloqueos?'<div class="blkdot"></div>':''}
+    <div class="cdept" style="color:${c}"><span style="width:5px;height:5px;border-radius:50%;background:${c};display:inline-block"></span>${t.dept}</div>
+    <div class="ctit">${t.titulo}</div>
+    <div class="cfoot">
+      <div class="cresp"><div class="av">${ini(t.resp)}</div>${t.resp.split(/[\/,]/)[0].trim()}</div>
+      <span class="pr p${pk(t.prio)}">${t.prio}</span>
+    </div>
+    ${t.fecha?`<div class="cdate">📅 ${t.fecha}</div>`:''}
+  </div>`;
+}
+function sf(d,btn){fDept=d;fUrg=false;renderBoard()}
+function tu(btn){fUrg=!fUrg;if(fUrg)fDept='todos';renderBoard()}
+
+// ═══ DEPARTAMENTOS ════════════════════════════════════
+function renderDepts(){
+  document.getElementById('dpage').innerHTML=Object.entries(DEPTS).map(([dept,color])=>{
+    const dt=TAREAS.filter(t=>t.dept===dept);if(!dt.length)return'';
+    const urg=dt.filter(t=>t.prio==='Urgente'&&t.estado!=='Completado').length;
+    return`<div class="dblk">
+      <div class="dhdr" style="border-left-color:${color}" onclick="togD(this)">
+        <div class="ddot" style="background:${color}"></div>
+        <span class="dname">${dept}</span>
+        ${urg?`<span class="dbdg durg">${urg} urgente${urg>1?'s':''}</span>`:''}
+        <span class="dbdg dcnt">${dt.length} tareas</span>
+        <span style="color:var(--text3);font-size:11px;margin-left:4px">▾</span>
+      </div>
+      <div class="dbody op">
+        <table class="dtable">
+          <tr><th>Tarea</th><th>Responsable</th><th>Prioridad</th><th>Estado</th><th>Fecha</th></tr>
+          ${dt.map(t=>`<tr onclick="openModal(${t.id})">
+            <td class="tm">${t.titulo}</td>
+            <td>${t.resp.split(/[\/,]/)[0].trim()}</td>
+            <td><span class="pr p${pk(t.prio)}">${t.prio}</span></td>
+            <td class="${t.estado==='Completado'?'stC':t.estado==='En progreso'?'stE':t.estado==='Bloqueado'?'stB':'stP'}">${t.estado}</td>
+            <td>${t.fecha||'—'}</td>
+          </tr>`).join('')}
+        </table>
+      </div>
+    </div>`;
+  }).join('');
+}
+function togD(h){h.nextElementSibling.classList.toggle('op')}
+
+// ═══ RESUMEN ══════════════════════════════════════════
+function renderResumen(){
+  document.getElementById('rg').innerHTML=Object.entries(DEPTS).map(([dept,color])=>{
+    const dt=TAREAS.filter(t=>t.dept===dept);
+    const done=dt.filter(t=>t.estado==='Completado').length;
+    const prog=dt.filter(t=>t.estado==='En progreso').length;
+    const urg=dt.filter(t=>t.prio==='Urgente'&&t.estado!=='Completado').length;
+    const pct=dt.length?Math.round(done/dt.length*100):0;
+    return`<div class="rc">
+      <div class="rdrow"><span class="rddot" style="background:${color}"></span><span class="rdname">${dept}</span>${urg?`<span class="pr pU" style="margin-left:auto">${urg} urg.</span>`:''}</div>
+      <div class="ptrack"><div class="pfill" style="width:${pct}%;background:${color}"></div></div>
+      <div class="rnums">
+        <span class="rnum"><strong>${done}</strong> hechas</span>
+        <span class="rnum"><strong>${prog}</strong> en curso</span>
+        <span class="rnum"><strong>${dt.length-done}</strong> pend.</span>
+        <span class="rnum" style="margin-left:auto"><strong>${pct}%</strong></span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══ MODAL ════════════════════════════════════════════
+function openModal(id){
+  const t=TAREAS.find(x=>x.id===id);if(!t)return;
+  prevEst[id]=t.estado;const c=clr(t.dept);
+  document.getElementById('mttl').textContent=t.titulo;
+  document.getElementById('mbody').innerHTML=`
+    <div class="mdbrow">
+      <div class="mdba" style="background:${c}15;color:${c};border:1px solid ${c}28">
+        <span style="width:5px;height:5px;border-radius:50%;background:${c};display:inline-block"></span>${t.dept}
+      </div>
+      <span class="pr p${pk(t.prio)}">${t.prio}</span>
+    </div>
+    <div class="mf"><label>Responsable</label><div class="mv" style="display:flex;align-items:center;gap:8px"><div class="av" style="width:24px;height:24px;font-size:9px">${ini(t.resp)}</div>${t.resp}</div></div>
+    <div class="mg">
+      <div class="mf"><label>Estado</label><select class="ms" id="mest">${['Pendiente','En progreso','Completado','Bloqueado'].map(s=>`<option ${t.estado===s?'selected':''}>${s}</option>`).join('')}</select></div>
+      <div class="mf"><label>Prioridad</label><select class="ms" id="mpri">${['Urgente','Alta','Media','Baja'].map(p=>`<option ${t.prio===p?'selected':''}>${p}</option>`).join('')}</select></div>
+    </div>
+    <div class="mf"><label>Fecha límite</label><input class="mi" id="mfech" value="${t.fecha}" placeholder="dd/mm/aaaa"></div>
+    <div class="mf"><label>Plan de acción</label><div class="mv">${t.accion||'—'}</div></div>
+    ${t.bloqueos?`<div class="mf"><label style="color:#fca5a5">Bloqueos</label><div class="mv blk">${t.bloqueos}</div></div>`:''}
+    <div class="mf"><label>Notas / actualización</label><textarea class="mta" id="mnot" rows="3">${t.notas||''}</textarea></div>
+    <button class="msave" onclick="saveModal(${id})">Guardar cambios</button>`;
+  document.getElementById('ov').classList.add('op');
+}
+async function saveModal(id){
+  const t=TAREAS.find(x=>x.id===id);if(!t)return;
+  const prev=prevEst[id];
+  t.estado=document.getElementById('mest').value;
+  t.prio=document.getElementById('mpri').value;
+  t.fecha=document.getElementById('mfech').value;
+  t.notas=document.getElementById('mnot').value;
+  closeModal();renderBoard();updUrg();toast('✓ Tarea actualizada','ts');
+  if(prev!=='Completado'&&t.estado==='Completado')await sendEmail('d',t);
+  if(prev!=='Bloqueado'&&t.estado==='Bloqueado')await sendEmail('b',t);
+}
+function nuevaTarea(){
+  document.getElementById('mttl').textContent='Nueva tarea';
+  document.getElementById('mbody').innerHTML=`
+    <div class="mf"><label>Título</label><input class="mi" id="nt" placeholder="Describe la tarea..."></div>
+    <div class="mg">
+      <div class="mf"><label>Departamento</label><select class="ms" id="nd">${Object.keys(DEPTS).map(d=>`<option>${d}</option>`).join('')}</select></div>
+      <div class="mf"><label>Responsable</label><input class="mi" id="nr" placeholder="Nombre"></div>
+    </div>
+    <div class="mg">
+      <div class="mf"><label>Prioridad</label><select class="ms" id="np">${['Urgente','Alta','Media','Baja'].map(p=>`<option>${p}</option>`).join('')}</select></div>
+      <div class="mf"><label>Fecha límite</label><input class="mi" id="nf" placeholder="dd/mm/aaaa"></div>
+    </div>
+    <div class="mf"><label>Plan de acción</label><textarea class="mta" id="na" rows="2" placeholder="¿Qué hay que hacer?"></textarea></div>
+    <div class="mf"><label>Bloqueos (opcional)</label><input class="mi" id="nb" placeholder="¿Algún impedimento?"></div>
+    <button class="msave" onclick="crearT()">Crear tarea</button>`;
+  document.getElementById('ov').classList.add('op');
+}
+function crearT(){
+  const tit=document.getElementById('nt').value.trim();
+  if(!tit){toast('Escribe el título','te');return}
+  TAREAS.push({id:nid++,dept:document.getElementById('nd').value,titulo:tit,
+    resp:document.getElementById('nr').value||'Sin asignar',prio:document.getElementById('np').value,
+    estado:'Pendiente',fecha:document.getElementById('nf').value,
+    accion:document.getElementById('na').value,bloqueos:document.getElementById('nb').value,notas:''});
+  closeModal();renderBoard();updUrg();toast('✓ Tarea creada','ts');
+}
+function closeModal(e){
+  if(e&&e.target!==document.getElementById('ov'))return;
+  document.getElementById('ov').classList.remove('op');
+}
+
+// ═══ IA ═══════════════════════════════════════════════
+function saveKey(){
+  const k=document.getElementById('apikey').value.trim();if(!k)return;
+  localStorage.setItem('oe_key',k);
+  document.getElementById('aok').style.display='block';
+  document.getElementById('bia').style.display='';
+  toast('✓ API Key guardada','ts');
+}
+async function procIA(){
+  const txt=document.getElementById('rein').value.trim();
+  if(!txt){toast('Pega el resumen primero','te');return}
+  const k=localStorage.getItem('oe_key');
+  if(!k){toast('Configura tu API Key primero','te');return}
+  document.getElementById('pbtxt').style.display='none';
+  document.getElementById('pbspin').style.display='flex';
+  document.getElementById('pb').disabled=true;
+  document.getElementById('rb').classList.remove('sh');
+  const prompt=`Eres el asistente operacional de Onus Express, empresa de mensajería.
+Analiza el siguiente resumen de reunión y extrae TODAS las tareas accionables.
+Por cada tarea devuelve un objeto JSON con: titulo (max 85 chars), dept (uno exacto de: "Operaciones","Comercial","Administración","RRHH","Flota","Marketing-Tech","Operaciones Locales","Atención Cliente"), resp, prio ("Urgente","Alta","Media","Baja"), fecha (dd/mm/aaaa o ""), accion, bloqueos ("" si no hay).
+RESPONDE ÚNICAMENTE con array JSON válido, sin markdown.\n\nRESUMEN:\n${txt}`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:2000,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    if(data.error)throw new Error(data.error.message);
+    const raw=data.content.map(b=>b.text||'').join('').replace(/```json|```/g,'').trim();
+    buf=JSON.parse(raw);
+    document.getElementById('tprevs').innerHTML=buf.map(t=>{
+      const c=clr(t.dept);
+      return`<div class="tp"><div class="tpdot" style="background:${c}"></div><div class="tptit">${t.titulo}</div>
+      <span class="tpdept" style="background:${c}15;color:${c}">${t.dept}</span>
+      <span class="pr p${pk(t.prio)}">${t.prio}</span></div>`;
+    }).join('');
+    document.getElementById('rb').classList.add('sh');
+    toast(`✓ ${buf.length} tareas detectadas`,'ts');
+  }catch(e){toast('Error: '+e.message,'te')}
+  finally{
+    document.getElementById('pbtxt').style.display='';
+    document.getElementById('pbspin').style.display='none';
+    document.getElementById('pb').disabled=false;
+  }
+}
+function importar(){
+  buf.forEach(t=>TAREAS.push({id:nid++,dept:t.dept||'Operaciones',titulo:t.titulo,resp:t.resp||'Sin asignar',prio:t.prio||'Media',estado:'Pendiente',fecha:t.fecha||'',accion:t.accion||'',bloqueos:t.bloqueos||'',notas:''}));
+  const n=buf.length;buf=[];
+  document.getElementById('rb').classList.remove('sh');
+  document.getElementById('rein').value='';
+  toast(`✓ ${n} tareas importadas`,'ts');
+  gp('kanban',document.querySelector('.sni'));
+  document.querySelector('.sni').classList.add('on');
+  renderBoard();updUrg();
+}
+
+// ═══ CONFIG ═══════════════════════════════════════════
+function saveCfg(){
+  localStorage.setItem(KC,JSON.stringify({
+    pk:document.getElementById('cpk').value.trim(),
+    svc:document.getElementById('csvc').value.trim(),
+    td:document.getElementById('ctd').value.trim(),
+    tr:document.getElementById('ctr').value.trim(),
+    sup:document.getElementById('csup').value.trim()
+  }));initEJS();toast('✓ Configuración EmailJS guardada','ts');
+}
+function saveAv(){
+  localStorage.setItem(KA,JSON.stringify({d:document.getElementById('avd').checked,b:document.getElementById('avb').checked,m:document.getElementById('avm').checked}));
+  toast('✓ Reglas guardadas','ts');
+}
+function renderEmap(){
+  const m=gm();
+  document.getElementById('emap').innerHTML=RESPS.map(n=>`
+    <div class="er">
+      <span class="el">${n}</span>
+      <input class="cfi" id="em_${n.replace(/\s/g,'_')}" value="${m[n]||''}" placeholder="${n.split(' ')[0].toLowerCase()}@onusexpress.com">
+    </div>`).join('');
+}
+function saveMails(){
+  const m={};
+  RESPS.forEach(n=>{const el=document.getElementById('em_'+n.replace(/\s/g,'_'));if(el&&el.value.trim())m[n]=el.value.trim()});
+  localStorage.setItem(KM,JSON.stringify(m));toast('✓ Correos guardados','ts');
+}
+
+init();
+</script>
+</body>
+</html>
