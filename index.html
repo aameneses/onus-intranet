@@ -230,24 +230,62 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .toast{background:var(--navy2);border:1px solid var(--brd2);border-radius:var(--r);padding:10px 14px;font-size:12px;color:var(--text);display:flex;align-items:center;gap:8px;animation:ti .22s ease;pointer-events:auto;min-width:240px;font-weight:400}
 .toast.ts{border-left:3px solid var(--teal)}.toast.tw2{border-left:3px solid #f59e0b}.toast.te{border-left:3px solid #ef4444}
 @keyframes ti{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+
+/* ── LOGIN MODAL ── */
+.login-overlay{position:fixed;inset:0;background:rgba(0,5,25,.95);z-index:999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px)}
+.login-box{background:#000c45;border:1px solid rgba(0,201,206,.25);border-radius:16px;width:min(380px,92vw);padding:36px 32px;position:relative;text-align:center}
+.login-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#00C9CE,transparent);border-radius:16px 16px 0 0}
+.login-logo{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:24px}
+.login-mark{width:42px;height:42px;border:1.5px solid #00C9CE;border-radius:9px;display:flex;align-items:center;justify-content:center;background:rgba(0,201,206,.1);font-weight:800;font-size:15px;color:#00C9CE}
+.login-brand{text-align:left}
+.login-name{font-weight:800;font-size:15px;color:#fff;line-height:1}
+.login-sub{font-size:9px;color:#00C9CE;letter-spacing:3px;text-transform:uppercase;margin-top:2px}
+.login-title{font-weight:700;font-size:17px;color:#fff;margin-bottom:6px;letter-spacing:-.3px}
+.login-desc{font-size:12px;color:rgba(232,240,255,.55);font-weight:300;line-height:1.6;margin-bottom:22px}
+.login-label{display:block;font-size:9px;font-weight:700;color:rgba(232,240,255,.3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:7px;text-align:left}
+.login-select{width:100%;padding:11px 12px;background:rgba(0,9,53,.8);border:1px solid rgba(0,201,206,.2);border-radius:8px;font-family:'REM',sans-serif;font-size:13px;color:rgba(232,240,255,.92);outline:none;cursor:pointer;margin-bottom:12px;appearance:none}
+.login-select:focus{border-color:#00C9CE}
+.login-select option{background:#000935}
+.login-btn{width:100%;padding:12px;border-radius:10px;background:#00C9CE;color:#000935;border:none;font-family:'REM',sans-serif;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.2px;transition:all .15s}
+.login-btn:hover{background:#00e0e6;transform:translateY(-1px)}
+.login-err{font-size:11px;color:#fca5a5;margin-top:8px;display:none}
+/* ── SESSION STRIP ── */
+.sb-session{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid rgba(0,201,206,.1)}
+.sb-session-av{width:22px;height:22px;border-radius:50%;background:#00C9CE;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:#000935;flex-shrink:0}
+.sb-session-name{font-size:10px;font-weight:600;color:rgba(232,240,255,.6);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-session-out{font-size:10px;color:rgba(232,240,255,.28);cursor:pointer;border:none;background:transparent;font-family:'REM',sans-serif;padding:2px 6px;border-radius:4px;transition:color .15s;flex-shrink:0}
+.sb-session-out:hover{color:#00C9CE}
+/* ── COPY BTN ── */
+.btn.copy{background:rgba(0,201,206,.1);color:#00C9CE;border-color:rgba(0,201,206,.2)}
+.btn.copy:hover{background:rgba(0,201,206,.18);border-color:rgba(0,201,206,.35)}
+/* ── MINE CARD ── */
+.card.is-mine{border-color:rgba(0,201,206,.2)}
+.fch.active-mine{background:rgba(0,201,206,.15);border-color:rgba(0,201,206,.35);color:#00C9CE;font-weight:700}
+
 </style>
 </head>
 <body>
-<!-- ══ WELCOME MODAL ══════════════════════ -->
-<div class="wm-bg" id="wm-bg">
-  <div class="wm">
-    <div class="wm-logorow">
-      <div class="wm-mark"><span class="wm-mktxt">OE</span></div>
-      <div><div class="wm-bname">ONUS</div><div class="wm-bexp">EXPRESS</div></div>
+<!-- LOGIN MODAL -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-mark">OE</div>
+      <div class="login-brand">
+        <div class="login-name">ONUS</div>
+        <div class="login-sub">EXPRESS</div>
+      </div>
     </div>
-    <div class="wm-title">Intranet Operacional</div>
-    <div class="wm-sub">Identifícate para acceder a tu tablero de tareas semanal.</div>
-    <label class="wm-lbl">¿Quién eres?</label>
-    <select class="wm-sel" id="wm-sel"><option value="">— Selecciona tu nombre —</option></select>
-    <button class="wm-btn" onclick="doLogin()">Entrar al sistema</button>
-    <div class="wm-err" id="wm-err">Selecciona tu nombre para continuar.</div>
+    <div class="login-title">Intranet Operacional</div>
+    <div class="login-desc">Identifícate para acceder a tu pizarra de tareas y seguimiento semanal.</div>
+    <label class="login-label">¿Quién eres?</label>
+    <select class="login-select" id="loginSelect">
+      <option value="">— Selecciona tu nombre —</option>
+    </select>
+    <button class="login-btn" onclick="doLogin()">Entrar</button>
+    <div class="login-err" id="loginErr">Selecciona tu nombre para continuar.</div>
   </div>
 </div>
+
 <div class="app">
   <aside class="sb">
     <div class="sb-logo">
@@ -256,10 +294,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <div><div class="sb-brand">ONUS</div><div class="sb-express">EXPRESS</div></div>
       </div>
     </div>
-    <div class="sb-sess">
-      <div class="sb-sess-av" id="sb-av">--</div>
-      <span class="sb-sess-name" id="sb-nm">—</span>
-      <button class="sb-sess-out" onclick="doLogout()" title="Cambiar usuario">✕</button>
+    <div class="sb-session">
+      <div class="sb-session-av" id="sessAv">--</div>
+      <span class="sb-session-name" id="sessName">—</span>
+      <button class="sb-session-out" onclick="doLogout()" title="Cambiar usuario">✕</button>
     </div>
     <div class="sb-week" id="sbweek"></div>
     <nav class="sb-nav">
@@ -281,7 +319,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       <div class="tb-dot"></div>
       <div><span class="tb-title" id="ttl">Tablero Kanban</span><span class="tb-sub" id="tsub"></span></div>
       <div class="tb-r">
-        <button class="btn cp" onclick="copyURL()">🔗 Copiar acceso</button>
+        <button class="btn copy" onclick="copyAccess()">🔗 Copiar acceso</button>
         <button class="btn" onclick="gp('carga',null)">⊕ Nueva reunión</button>
         <button class="btn p" onclick="nuevaTarea()">+ Añadir tarea</button>
       </div>
@@ -377,473 +415,752 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 <div class="tw" id="tw"></div>
 
 <script>
-// ═══════════════════════════════════════════════════
-// BRAND & DATOS
-// ═══════════════════════════════════════════════════
-// ══ TEAM & EMAILS ══════════════════════════════════════════════════
-const TEAM=[
-  {n:'Junior De Freitas',  e:'jdefreitas@onusexpress.com', dept:'Operaciones',  sup:true},
-  {n:'Alejandro Meneses',  e:'ameneses@onusexpress.com',   dept:'Operaciones'},
-  {n:'Marta Ibars',        e:'mibars@onusexpress.com',     dept:'Operaciones'},
-  {n:'Miguel Pereira',     e:'miguel@onusexpress.com',     dept:'Operaciones'},
-  {n:'Valentin Issler',    e:'vissler@onusexpress.com',    dept:'Comercial'},
-  {n:'Andres',             e:'info@onusexpress.com',       dept:'Comercial'},
-  {n:'Patricia Moreno',    e:'amoreno@onusexpress.com',    dept:'RRHH'},
-  {n:'Maria Moreno',       e:'mmoreno@onusexpress.com',    dept:'RRHH'},
-  {n:'Diana Da Maia',      e:'diana@onusexpress.com',      dept:'RRHH'},
-  {n:'Yamir Diaz',         e:'flota@onusexpress.com',      dept:'Flota'},
-  {n:'Sebastian',          e:'sebastian@onusexpress.com',  dept:'Marketing-Tech'},
-];
-const RESPS=TEAM.map(t=>t.n);
-const SUPERVISOR='Junior De Freitas';
+// ============================================================
+// ONUS EXPRESS — INTRANET v3.0
+// ============================================================
 
-// ══ BRAND ═══════════════════════════════════════════════════════════
-const DEPTS={
-  "Operaciones":"#3b82f6","Comercial":"#00C9CE","Administración":"#f59e0b",
-  "RRHH":"#ef4444","Flota":"#8b5cf6","Marketing-Tech":"#06b6d4",
-  "Operaciones Locales":"#f97316","Atención Cliente":"#10b981"
+// ── EQUIPO ──────────────────────────────────────────────────
+const TEAM = [
+  { name:'Junior De Freitas', email:'jdefreitas@onusexpress.com', dept:'Operaciones',    isSupervisor:true  },
+  { name:'Alejandro Meneses', email:'ameneses@onusexpress.com',   dept:'Operaciones'                       },
+  { name:'Marta Ibars',       email:'mibars@onusexpress.com',     dept:'Operaciones'                       },
+  { name:'Miguel Pereira',    email:'miguel@onusexpress.com',     dept:'Operaciones'                       },
+  { name:'Valentin Issler',   email:'vissler@onusexpress.com',    dept:'Comercial'                         },
+  { name:'Andres',            email:'info@onusexpress.com',       dept:'Comercial'                         },
+  { name:'Patricia Moreno',   email:'amoreno@onusexpress.com',    dept:'RRHH'                              },
+  { name:'Maria Moreno',      email:'mmoreno@onusexpress.com',    dept:'RRHH'                              },
+  { name:'Diana Da Maia',     email:'diana@onusexpress.com',      dept:'RRHH'                              },
+  { name:'Yamir Diaz',        email:'flota@onusexpress.com',      dept:'Flota'                             },
+  { name:'Sebastian',         email:'sebastian@onusexpress.com',  dept:'Marketing-Tech'                    },
+];
+
+// ── COLORES DEPARTAMENTOS ────────────────────────────────────
+const DEPTS = {
+  'Operaciones':        '#3b82f6',
+  'Comercial':          '#00C9CE',
+  'Administración':     '#f59e0b',
+  'RRHH':               '#ef4444',
+  'Flota':              '#8b5cf6',
+  'Marketing-Tech':     '#06b6d4',
+  'Operaciones Locales':'#f97316',
+  'Atención Cliente':   '#10b981',
 };
-const PK={Urgente:'U',Alta:'A',Media:'M',Baja:'B'};
-const COLS=[{k:'Pendiente',d:'dP',c:'ccP'},{k:'En progreso',d:'dE',c:'ccE'},{k:'Completado',d:'dC',c:'ccC'},{k:'Bloqueado',d:'dB',c:'ccB'}];
-const RESPS=['Junior','Diana','Sebas','María','Marta','Yamir','Patricia','Ricardo','Elio','Andrea','Marlon','Anderson','Miguel','Sebastián','Juanma','José','Miguel Ángel'];
 
-const _TD=[
-  {id:1,dept:"Operaciones",titulo:"Licencia actividades Barcelona/Tarragona",resp:"Junior",prio:"Urgente",estado:"Pendiente",fecha:"26/05/2025",accion:"Firmar contrato Tarragona y enviar doc al bróker (100€+IVA, 15 días)",bloqueos:"Contrato sin firmar",notas:""},
-  {id:2,dept:"Operaciones",titulo:"Pack Barcelona – repartidores y documentación",resp:"Junior",prio:"Urgente",estado:"Pendiente",fecha:"12/05/2025",accion:"Revisar ofertas y enviar doc de 2 repartidores urgente o cambiarlos",bloqueos:"Faltan repartidores",notas:""},
-  {id:3,dept:"Operaciones",titulo:"Flujo operativo Almacén Bonfreu",resp:"Junior",prio:"Alta",estado:"Pendiente",fecha:"19/05/2025",accion:"Crear flujo operativo con almacén externo",bloqueos:"",notas:""},
-  {id:4,dept:"Operaciones",titulo:"Facturación pre-vacaciones",resp:"Junior",prio:"Media",estado:"Pendiente",fecha:"",accion:"Dejar facturación adelantada antes de vacaciones",bloqueos:"",notas:""},
-  {id:5,dept:"Comercial",titulo:"Correos Express – reclutamiento",resp:"Sebas",prio:"Alta",estado:"En progreso",fecha:"12/05/2025",accion:"Seguir llamando candidatos; concretar cliente hoy",bloqueos:"Tarifas bajas",notas:""},
-  {id:6,dept:"Comercial",titulo:"GLS Alicante – reunión de cierre",resp:"Junior",prio:"Alta",estado:"Pendiente",fecha:"12/05/2025",accion:"Contactar a Enrique hoy y fijar fecha de inicio",bloqueos:"",notas:""},
-  {id:7,dept:"Comercial",titulo:"Celeritas Irún – rutas del norte",resp:"Junior",prio:"Urgente",estado:"En progreso",fecha:"13/05/2025",accion:"Un perfil ayer, otro mañana; Junior gestiona 3.º; Recruiting urgente",bloqueos:"Falta apoyo rutas norte",notas:""},
-  {id:8,dept:"Comercial",titulo:"Segur de Cádiz – propuesta tarifaria",resp:"Juanma",prio:"Media",estado:"En progreso",fecha:"",accion:"Esperar respuesta propuesta económica de Juanma",bloqueos:"",notas:""},
-  {id:9,dept:"Comercial",titulo:"Proyecto Cainiao / Tipsa – base de datos",resp:"Miguel",prio:"Alta",estado:"Pendiente",fecha:"",accion:"Presentar proyecto filtrado BD; 1.000 contactos a cambio de BD mensajeros",bloqueos:"",notas:""},
-  {id:10,dept:"Comercial",titulo:"Tipsa Vitoria – 2 mensajeros urgentes",resp:"Anderson",prio:"Urgente",estado:"Pendiente",fecha:"12/05/2025",accion:"Contactar Anderson Caicedo para captación urgente",bloqueos:"",notas:""},
-  {id:11,dept:"Administración",titulo:"Portabilidad líneas a Orange",resp:"Diana",prio:"Media",estado:"Pendiente",fecha:"",accion:"Gestionar portabilidad para unificar servicio",bloqueos:"Bloquea la centralita",notas:""},
-  {id:12,dept:"Administración",titulo:"Cambio titularidad Prosegur Córdoba",resp:"Ricardo",prio:"Alta",estado:"Pendiente",fecha:"16/05/2025",accion:"Ejecutar cambio de titularidad esta semana",bloqueos:"",notas:""},
-  {id:13,dept:"Administración",titulo:"Albaranes Ader / Mensajería La Selva",resp:"Diana",prio:"Urgente",estado:"Pendiente",fecha:"",accion:"Buscar albaranes perdidos (mudanza Montmeló); evaluar denuncia",bloqueos:"Cuentas bloqueadas en Asnef",notas:""},
-  {id:14,dept:"Administración",titulo:"Alojamiento Francia – hotel urgente",resp:"Patricia",prio:"Urgente",estado:"Pendiente",fecha:"13/05/2025",accion:"Buscar hotel urgente para cubrir 2 días",bloqueos:"Obra retrasada; hotel actual termina",notas:""},
-  {id:15,dept:"Administración",titulo:"Plataformas CAE – perfiles MRV/GLS/PAT",resp:"María",prio:"Alta",estado:"En progreso",fecha:"31/05/2025",accion:"Culminar subida de perfiles; validar con Junior antes de fin de mes",bloqueos:"",notas:""},
-  {id:16,dept:"Administración",titulo:"Siniestro Mallorca – notificación 1.000€",resp:"María",prio:"Alta",estado:"Pendiente",fecha:"01/06/2025",accion:"Solicitar info a Norge; respuesta legal en plazo de 20 días",bloqueos:"",notas:""},
-  {id:17,dept:"Administración",titulo:"Demandas Córdoba – ex-trabajadores MRV",resp:"Diana",prio:"Urgente",estado:"En progreso",fecha:"",accion:"Gestión conjunta con abogados; responsabilidad en Diana y María",bloqueos:"",notas:""},
-  {id:18,dept:"RRHH",titulo:"Traspaso RRHH – Patricia nueva responsable",resp:"Marta",prio:"Alta",estado:"Pendiente",fecha:"",accion:"Crear flujo comunicación; incidencias por escrito, no llamadas",bloqueos:"",notas:""},
-  {id:19,dept:"RRHH",titulo:"Contratos Francia – extensiones a vencer",resp:"Marta",prio:"Alta",estado:"Pendiente",fecha:"",accion:"Hablar con Lev para gestionar extensiones",bloqueos:"",notas:""},
-  {id:20,dept:"Flota",titulo:"Pagos talleres – ejecución jueves",resp:"Yamir",prio:"Alta",estado:"Pendiente",fecha:"15/05/2025",accion:"Ejecutar pagos cada jueves para mantener talleres activos",bloqueos:"Talleres exigen pago adelantado",notas:""},
-  {id:21,dept:"Flota",titulo:"Venta furgonetas – precio elevado",resp:"Yamir",prio:"Media",estado:"Pendiente",fecha:"",accion:"Evaluar reducción de precio o financiamiento",bloqueos:"",notas:""},
-  {id:22,dept:"Flota",titulo:"Furgoneta HTV – desguace",resp:"Marlon",prio:"Media",estado:"Pendiente",fecha:"",accion:"Marlon desmonta cajón; chasis y motor al desguace; baja seguro",bloqueos:"",notas:""},
-  {id:23,dept:"Marketing-Tech",titulo:"Feria SIL – presupuesto y campañas",resp:"Sebastián",prio:"Urgente",estado:"En progreso",fecha:"",accion:"Cerrar presupuesto urgente con Diana y Miguel para activar campañas",bloqueos:"Presupuesto sin cerrar",notas:"Mobiliario y mockups en curso"},
-  {id:24,dept:"Marketing-Tech",titulo:"Pruebas operativa envío directo",resp:"Sebastián",prio:"Media",estado:"Pendiente",fecha:"",accion:"Realizar pruebas en cuanto Pedro dé aprobación",bloqueos:"Pendiente aprobación Pedro",notas:""},
-  {id:25,dept:"Marketing-Tech",titulo:"Plataforma mensajeros – creación perfiles",resp:"Sebastián",prio:"Alta",estado:"Pendiente",fecha:"",accion:"Crear perfiles; mensajeros suben su propia documentación",bloqueos:"",notas:""},
-  {id:26,dept:"Operaciones Locales",titulo:"Tarragona – sustitución mensajeros",resp:"Elio",prio:"Alta",estado:"En progreso",fecha:"",accion:"Elio y Andrea sustituyen paulatinamente a los problemáticos",bloqueos:"",notas:""},
-  {id:27,dept:"Operaciones Locales",titulo:"Tarragona – mudanza nave Ri Clar",resp:"Junior",prio:"Urgente",estado:"Pendiente",fecha:"01/06/2025",accion:"Operar en Ri Clar el 1 jun; confirmar internet; baja nave Riudoms",bloqueos:"Verificar cobertura internet",notas:""},
-  {id:28,dept:"Operaciones Locales",titulo:"Tarragona – deuda bandas 2.000€",resp:"Miguel Ángel",prio:"Alta",estado:"Pendiente",fecha:"",accion:"Llamar para asumir problema y negociar pago del 50%",bloqueos:"Envío perdido frena pago central",notas:""},
-  {id:29,dept:"Operaciones Locales",titulo:"Lugo – cobertura sábados",resp:"José",prio:"Alta",estado:"Pendiente",fecha:"",accion:"Pactar con José como fijo en fines de semana; remunerar a Alberto",bloqueos:"Pablo dejó 30 envíos sin entregar",notas:""},
-  {id:30,dept:"Atención Cliente",titulo:"Centralita – flyers y desvíos",resp:"Junior De Freitas",prio:"Media",estado:"Pendiente",fecha:"",accion:"Entregar flyers; configurar centralita con desvíos MRV y Celeritas",bloqueos:"Paralizada hasta mudanza Orange",notas:""},
+const PRIO_CLASS = { Urgente:'pU', Alta:'pA', Media:'pM', Baja:'pB' };
+const COLS = [
+  { key:'Pendiente',   dot:'dP', cnt:'ccP' },
+  { key:'En progreso', dot:'dE', cnt:'ccE' },
+  { key:'Completado',  dot:'dC', cnt:'ccC' },
+  { key:'Bloqueado',   dot:'dB', cnt:'ccB' },
 ];
-const TAREAS_DEFAULT=JSON.parse(JSON.stringify(_TD));
-let TAREAS=[];
-// ══ PERSIST ═══════════════════════════════════════════════════════
-const KT='oe_t3',KU='oe_u';
-const DEFAULT_TASKS_KEY='oe_defaults_loaded';
-function saveTareas(){localStorage.setItem(KT,JSON.stringify(TAREAS))}
-function loadTareas(){
-  const s=localStorage.getItem(KT);
-  if(s){try{TAREAS=JSON.parse(s);return}catch(e){}}
-  TAREAS=JSON.parse(JSON.stringify(TAREAS_DEFAULT));
-  saveTareas();
-}
-// ══ STATE ══════════════════════════════════════════════════════════
-let nid=Date.now(),fDept='todos',fUrg=false,fMine=false,buf=[],prevEst={};
-let currentUser=null,isSup=false;
 
-// ═══ UTILS ═══════════════════════════════════════════
-function pk(p){return PK[p]||'M'}
-function clr(d){return DEPTS[d]||'#00C9CE'}
-function ini(s){return(s||'').split(/[\s\/\-,]+/).slice(0,2).map(w=>(w[0]||'').toUpperCase()).join('')}
-function toast(msg,c='ts'){
-  const w=document.getElementById('tw'),el=document.createElement('div');
-  el.className=`toast ${c}`;el.textContent=msg;w.appendChild(el);
-  setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .3s';setTimeout(()=>el.remove(),320)},3500);
-}
+// ── TAREAS POR DEFECTO ───────────────────────────────────────
+const SEED_TASKS = [
+  { dept:'Operaciones',        titulo:'Licencia actividades Barcelona/Tarragona',    resp:'Junior De Freitas', prio:'Urgente', estado:'Pendiente',   fecha:'26/05/2025', accion:'Firmar contrato Tarragona y enviar doc al bróker (100€+IVA, 15 días)', bloqueos:'Contrato sin firmar', notas:'' },
+  { dept:'Operaciones',        titulo:'Pack Barcelona – repartidores y docs',        resp:'Junior De Freitas', prio:'Urgente', estado:'Pendiente',   fecha:'12/05/2025', accion:'Revisar ofertas y enviar doc de 2 repartidores o cambiarlos',          bloqueos:'Faltan repartidores', notas:'' },
+  { dept:'Operaciones',        titulo:'Flujo operativo Almacén Bonfreu',             resp:'Alejandro Meneses', prio:'Alta',    estado:'Pendiente',   fecha:'19/05/2025', accion:'Crear flujo operativo con almacén externo',                            bloqueos:'', notas:'' },
+  { dept:'Operaciones',        titulo:'Facturación pre-vacaciones',                  resp:'Junior De Freitas', prio:'Media',   estado:'Pendiente',   fecha:'',           accion:'Dejar facturación adelantada antes de vacaciones',                     bloqueos:'', notas:'' },
+  { dept:'Comercial',          titulo:'Correos Express – reclutamiento',             resp:'Valentin Issler',   prio:'Alta',    estado:'En progreso', fecha:'12/05/2025', accion:'Seguir llamando candidatos; concretar cliente hoy',                    bloqueos:'Tarifas bajas', notas:'' },
+  { dept:'Comercial',          titulo:'GLS Alicante – reunión de cierre',            resp:'Junior De Freitas', prio:'Alta',    estado:'Pendiente',   fecha:'12/05/2025', accion:'Contactar a Enrique hoy y fijar fecha de inicio',                      bloqueos:'', notas:'' },
+  { dept:'Comercial',          titulo:'Celeritas Irún – rutas del norte',            resp:'Junior De Freitas', prio:'Urgente', estado:'En progreso', fecha:'13/05/2025', accion:'Un perfil ayer, otro mañana; Junior gestiona 3.º',                      bloqueos:'Falta apoyo rutas norte', notas:'' },
+  { dept:'Comercial',          titulo:'Proyecto Cainiao / Tipsa – BD',               resp:'Miguel Pereira',    prio:'Alta',    estado:'Pendiente',   fecha:'',           accion:'Presentar proyecto filtrado BD; 1.000 contactos a cambio de BD mensajeros', bloqueos:'', notas:'' },
+  { dept:'Administración',     titulo:'Portabilidad líneas a Orange',                resp:'Diana Da Maia',     prio:'Media',   estado:'Pendiente',   fecha:'',           accion:'Gestionar portabilidad para unificar servicio',                        bloqueos:'Bloquea la centralita', notas:'' },
+  { dept:'Administración',     titulo:'Albaranes Ader / Mensajería La Selva',        resp:'Diana Da Maia',     prio:'Urgente', estado:'Pendiente',   fecha:'',           accion:'Buscar albaranes (mudanza Montmeló); evaluar denuncia',                bloqueos:'Cuentas bloqueadas en Asnef', notas:'' },
+  { dept:'Administración',     titulo:'Alojamiento Francia – hotel urgente',         resp:'Patricia Moreno',   prio:'Urgente', estado:'Pendiente',   fecha:'13/05/2025', accion:'Buscar hotel urgente para cubrir 2 días',                              bloqueos:'Obra retrasada', notas:'' },
+  { dept:'Administración',     titulo:'Plataformas CAE – perfiles MRV/GLS/PAT',     resp:'Maria Moreno',      prio:'Alta',    estado:'En progreso', fecha:'31/05/2025', accion:'Culminar subida de perfiles; validar con Junior',                      bloqueos:'', notas:'' },
+  { dept:'Administración',     titulo:'Siniestro Mallorca – 1.000€',                resp:'Maria Moreno',      prio:'Alta',    estado:'Pendiente',   fecha:'01/06/2025', accion:'Solicitar info a Norge; respuesta en 20 días',                         bloqueos:'', notas:'' },
+  { dept:'Administración',     titulo:'Demandas Córdoba – ex-trabajadores MRV',     resp:'Diana Da Maia',     prio:'Urgente', estado:'En progreso', fecha:'',           accion:'Gestión conjunta con abogados',                                        bloqueos:'', notas:'' },
+  { dept:'RRHH',               titulo:'Traspaso RRHH – Patricia nueva responsable', resp:'Marta Ibars',       prio:'Alta',    estado:'Pendiente',   fecha:'',           accion:'Crear flujo comunicación; incidencias por escrito',                    bloqueos:'', notas:'' },
+  { dept:'RRHH',               titulo:'Contratos Francia – extensiones a vencer',   resp:'Marta Ibars',       prio:'Alta',    estado:'Pendiente',   fecha:'',           accion:'Hablar con Lev para gestionar extensiones',                            bloqueos:'', notas:'' },
+  { dept:'Flota',              titulo:'Pagos talleres – ejecución jueves',           resp:'Yamir Diaz',        prio:'Alta',    estado:'Pendiente',   fecha:'15/05/2025', accion:'Ejecutar pagos cada jueves para mantener talleres',                    bloqueos:'Talleres exigen pago adelantado', notas:'' },
+  { dept:'Flota',              titulo:'Venta furgonetas – precio elevado',           resp:'Yamir Diaz',        prio:'Media',   estado:'Pendiente',   fecha:'',           accion:'Evaluar reducción precio o financiamiento',                            bloqueos:'', notas:'' },
+  { dept:'Flota',              titulo:'Furgoneta HTV – desguace',                   resp:'Yamir Diaz',        prio:'Media',   estado:'Pendiente',   fecha:'',           accion:'Desmontar cajón; motor al desguace; baja seguro',                      bloqueos:'', notas:'' },
+  { dept:'Marketing-Tech',     titulo:'Feria SIL – presupuesto y campañas',         resp:'Sebastian',         prio:'Urgente', estado:'En progreso', fecha:'',           accion:'Cerrar presupuesto urgente con Diana y Miguel',                        bloqueos:'Presupuesto sin cerrar', notas:'Mobiliario y mockups en curso' },
+  { dept:'Marketing-Tech',     titulo:'Pruebas operativa envío directo',            resp:'Sebastian',         prio:'Media',   estado:'Pendiente',   fecha:'',           accion:'Realizar pruebas cuando Pedro dé aprobación',                          bloqueos:'Pendiente aprobación Pedro', notas:'' },
+  { dept:'Marketing-Tech',     titulo:'Plataforma mensajeros – perfiles',           resp:'Sebastian',         prio:'Alta',    estado:'Pendiente',   fecha:'',           accion:'Crear perfiles; mensajeros suben su propia documentación',              bloqueos:'', notas:'' },
+  { dept:'Operaciones Locales',titulo:'Tarragona – mudanza nave Ri Clar',           resp:'Junior De Freitas', prio:'Urgente', estado:'Pendiente',   fecha:'01/06/2025', accion:'Operar en Ri Clar el 1 jun; confirmar internet; baja Riudoms',          bloqueos:'Verificar cobertura internet', notas:'' },
+  { dept:'Operaciones Locales',titulo:'Tarragona – deuda bandas 2.000€',            resp:'Miguel Pereira',    prio:'Alta',    estado:'Pendiente',   fecha:'',           accion:'Llamar para asumir y negociar pago del 50%',                           bloqueos:'Envío perdido frena pago central', notas:'' },
+  { dept:'Atención Cliente',   titulo:'Centralita – flyers y desvíos',              resp:'Junior De Freitas', prio:'Media',   estado:'Pendiente',   fecha:'',           accion:'Entregar flyers; configurar centralita con desvíos MRW y Celeritas',    bloqueos:'Paralizada hasta mudanza Orange', notas:'' },
+].map((t, i) => ({ ...t, id: i + 1 }));
 
-// ═══ EMAILJS ═════════════════════════════════════════
-const KC='oe_cfg',KM='oe_mls',KA='oe_avs';
-const gc=()=>JSON.parse(localStorage.getItem(KC)||'{}');
-const gm=()=>JSON.parse(localStorage.getItem(KM)||'{}');
-const ga=()=>JSON.parse(localStorage.getItem(KA)||'{"d":true,"b":true,"m":true}');
-function initEJS(){const c=gc();if(c.pk){try{emailjs.init(c.pk)}catch(e){}}}
+// ── STORAGE ──────────────────────────────────────────────────
+const LS = {
+  TASKS : 'oe_tasks_v3',
+  USER  : 'oe_user_v3',
+  CFG   : 'oe_cfg',
+  MAILS : 'oe_mails',
+  AVISO : 'oe_aviso',
+  APIKEY: 'oe_apikey',
+};
 
-async function sendEmail(tipo,t){
-  const c=gc(),av=ga();
-  if(!c.pk||!c.svc)return;
-  if(tipo==='d'&&!av.d)return;
-  if(tipo==='b'&&!av.b)return;
-  const tmpl=tipo==='d'?c.td:c.tr;if(!tmpl)return;
-  const now=new Date().toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'});
-  try{
-    await emailjs.send(c.svc,tmpl,{
-      supervisor:c.sup||'',to_email:c.sup||'',
-      responsable:t.resp,tarea_titulo:t.titulo,departamento:t.dept,
-      prioridad:t.prio,estado:t.estado,fecha_limite:t.fecha||'—',
-      accion:t.accion||'—',notas:t.notas||'—',
-      fecha_cambio:now,url_tablero:window.location.href
-    });
-    toast('📧 Aviso enviado por email','ts');
-  }catch(e){console.warn(e)}
-}
+// ── STATE ─────────────────────────────────────────────────────
+let tasks       = [];
+let currentUser = null;
+let isSup       = false;
+let filterDept  = 'todos';
+let filterUrgent= false;
+let filterMine  = false;
+let importBuffer= [];
+let prevStatus  = {};
 
-function chkLunes(){
-  const av=ga();if(!av.m)return;
-  const h=new Date();if(h.getDay()!==1)return;
-  const lk='oe_ln_'+h.toDateString();if(localStorage.getItem(lk))return;
-  const urg=TAREAS.filter(t=>t.prio==='Urgente'&&t.estado!=='Completado');if(!urg.length)return;
-  const c=gc();if(!c.pk||!c.svc||!c.tr)return;
-  emailjs.send(c.svc,c.tr,{
-    supervisor:c.sup||'',to_email:c.sup||'',
-    num_urgentes:urg.length,lista_tareas:urg.map(t=>`• ${t.titulo} — ${t.resp}`).join('\n'),
-    fecha_cambio:h.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'}),
-    url_tablero:window.location.href,
-    tarea_titulo:`${urg.length} tarea(s) urgentes pendientes`,
-    departamento:'Varios',responsable:'Equipo',prioridad:'Urgente',
-    estado:'Pendiente',fecha_limite:'—',accion:'—',notas:'—'
-  }).then(()=>{localStorage.setItem(lk,'1');toast(`🔔 Recordatorio: ${urg.length} urgentes`,'tw2')}).catch(()=>{});
+// ============================================================
+// PERSISTENCIA — syncStorage() es el único punto de escritura
+// ============================================================
+function syncStorage() {
+  localStorage.setItem(LS.TASKS, JSON.stringify(tasks));
 }
 
-// ═══ INIT ═════════════════════════════════════════════
-// ══ SESSION ════════════════════════════════════════════════════════
-function buildSel(){
-  const s=document.getElementById('wm-sel');
-  s.innerHTML='<option value="">— Selecciona tu nombre —</option>'+TEAM.map(t=>`<option value="${t.n}">${t.n} · ${t.dept}</option>`).join('');
-}
-function doLogin(){
-  const v=document.getElementById('wm-sel').value;
-  if(!v){document.getElementById('wm-err').style.display='block';return;}
-  localStorage.setItem(KU,v);applySession(v);
-}
-function doLogout(){
-  localStorage.removeItem(KU);currentUser=null;isSup=false;fMine=false;
-  document.getElementById('wm-bg').classList.remove('hidden');
-  document.getElementById('wm-sel').value='';
-  document.getElementById('wm-err').style.display='none';
-}
-function applySession(name){
-  currentUser=name;
-  isSup=(name===SUPERVISOR);
-  document.getElementById('wm-bg').classList.add('hidden');
-  document.getElementById('sb-av').textContent=ini(name);
-  document.getElementById('sb-nm').textContent=name;
-  if(!isSup){fMine=true;}
-  renderBoard();updUrg();
-}
-function checkSession(){
-  const s=localStorage.getItem(KU);
-  if(s&&TEAM.find(t=>t.n===s)){applySession(s);}
-}
-function copyURL(){
-  navigator.clipboard.writeText(window.location.href)
-    .then(()=>toast('🔗 Enlace copiado — compártelo con el equipo','ts'))
-    .catch(()=>toast('URL: '+window.location.href,'tw2'));
+function loadTasks() {
+  try {
+    const raw = localStorage.getItem(LS.TASKS);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        tasks = parsed;
+        return;
+      }
+    }
+  } catch (_) {}
+  // Sin datos guardados: cargar seed
+  tasks = JSON.parse(JSON.stringify(SEED_TASKS));
+  syncStorage();
 }
 
-function init(){
-  loadTareas();
-  buildSel();
-  const d=new Date();
-  document.getElementById('sbweek').textContent='Semana '+d.toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'});
-  const k=localStorage.getItem('oe_key');
-  if(k){document.getElementById('apikey').value=k;document.getElementById('aok').style.display='block';document.getElementById('bia').style.display='';}
-  const c=gc();
-  if(c.pk)document.getElementById('cpk').value=c.pk;
-  if(c.svc)document.getElementById('csvc').value=c.svc;
-  if(c.td)document.getElementById('ctd').value=c.td;
-  if(c.tr)document.getElementById('ctr').value=c.tr;
-  if(c.sup)document.getElementById('csup').value=c.sup;
-  const av=ga();
-  document.getElementById('avd').checked=av.d!==false;
-  document.getElementById('avb').checked=av.b!==false;
-  document.getElementById('avm').checked=av.m!==false;
-  renderEmap();initEJS();updUrg();
-  checkSession();
-  setTimeout(chkLunes,2500);
-}
+const getCfg   = () => { try { return JSON.parse(localStorage.getItem(LS.CFG)   || '{}');                              } catch(_){return {};} };
+const getMails = () => { try { return JSON.parse(localStorage.getItem(LS.MAILS) || '{}');                              } catch(_){return {};} };
+const getAviso = () => { try { return JSON.parse(localStorage.getItem(LS.AVISO) || '{"done":true,"blocked":true,"monday":true}'); } catch(_){return {done:true,blocked:true,monday:true};} };
 
-// ═══ NAV ══════════════════════════════════════════════
-const PTIT={kanban:'Tablero Kanban',departamentos:'Por Departamento',resumen:'Resumen Ejecutivo',carga:'Cargar Reunión',config:'Configuración'};
-function gp(name,el){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.sni').forEach(n=>n.classList.remove('on'));
-  document.getElementById('page-'+name).classList.add('on');
-  if(el)el.classList.add('on');
-  document.getElementById('ttl').textContent=PTIT[name]||name;
-  if(name==='departamentos')renderDepts();
-  if(name==='resumen')renderResumen();
-  if(name==='kanban')renderBoard();
-}
-
-// ═══ KANBAN ═══════════════════════════════════════════
-function tv(){
-  let t=TAREAS;
-  if(fMine&&currentUser&&!isSup){
-    const fn=currentUser.split(' ')[0].toLowerCase();
-    t=t.filter(x=>x.resp&&x.resp.toLowerCase().includes(fn));
-  }
-  if(fDept!=='todos')t=t.filter(x=>x.dept===fDept);
-  if(fUrg)t=t.filter(x=>x.prio==='Urgente'&&x.estado!=='Completado');
-  return t;
-}
-function setMine(){fMine=true;fDept='todos';fUrg=false;renderBoard()}
-function setAll(){fMine=false;fDept='todos';fUrg=false;renderBoard()}
-function updUrg(){
-  const n=TAREAS.filter(t=>t.prio==='Urgente'&&t.estado!=='Completado').length;
-  const b=document.getElementById('buru');b.textContent=n;b.style.display=n?'':'none';
-}
-function renderBoard(){
-  const vis=tv();
-  const cnt={'Pendiente':0,'En progreso':0,'Completado':0,'Bloqueado':0};
-  vis.forEach(t=>{if(cnt[t.estado]!==undefined)cnt[t.estado]++});
-  document.getElementById('stats').innerHTML=[
-    {n:vis.length,l:'Total',cls:'t',nc:'teal'},{n:cnt['Pendiente'],l:'Pendientes',cls:'a',nc:'amb'},
-    {n:cnt['En progreso'],l:'En progreso',cls:'b',nc:'blu'},{n:cnt['Completado'],l:'Completadas',cls:'g',nc:'grn'}
-  ].map(s=>`<div class="sc ${s.cls}"><div class="sn ${s.nc}">${s.n}</div><div class="sl">${s.l}</div></div>`).join('');
-  let fhtml=`<span class="flbl">Filtrar:</span>`;
-  if(!isSup&&currentUser){
-    fhtml+=`<button class="fch ${fMine?'fmine':''}" onclick="setMine()">⭐ Mis tareas</button>`;
-    fhtml+=`<button class="fch ${!fMine?'on':''}" onclick="setAll()">Ver todo el equipo</button>`;
+// ============================================================
+// AUTH — checkAuth() decide si muestra modal o carga pizarra
+// ============================================================
+function checkAuth() {
+  const saved = localStorage.getItem(LS.USER);
+  const member = TEAM.find(t => t.name === saved);
+  if (member) {
+    applySession(member);
   } else {
-    fhtml+=depts.map(d=>`<button class="fch ${d===fDept&&!fUrg?'on':''}" onclick="sf('${d}',this)">${d==='todos'?'Todos':d}</button>`).join('');
+    showLogin();
   }
-  fhtml+=`<button class="fch ${fUrg?'uo':''}" onclick="tu(this)">⚡ Urgentes</button>`;
-  document.getElementById('fbar').innerHTML=fhtml;
-  document.getElementById('board').innerHTML=COLS.map(col=>{
-    const cards=vis.filter(t=>t.estado===col.k);
-    return`<div><div class="ch"><span class="cdot ${col.d}"></span><span class="cn">${col.k}</span><span class="cc ${col.c}">${cards.length}</span></div>
-    <div class="cbody">${cards.length?cards.map(rc).join(''):'<div class="cempty">— Sin tareas —</div>'}</div></div>`;
+}
+
+function showLogin() {
+  document.getElementById('loginOverlay').style.display = 'flex';
+}
+
+function hideLogin() {
+  document.getElementById('loginOverlay').style.display = 'none';
+}
+
+function buildLoginSelect() {
+  const sel = document.getElementById('loginSelect');
+  sel.innerHTML = '<option value="">— Selecciona tu nombre —</option>' +
+    TEAM.map(t => `<option value="${t.name}">${t.name} · ${t.dept}</option>`).join('');
+}
+
+function doLogin() {
+  const sel    = document.getElementById('loginSelect');
+  const err    = document.getElementById('loginErr');
+  const member = TEAM.find(t => t.name === sel.value);
+  if (!member) { err.style.display = 'block'; return; }
+  err.style.display = 'none';
+  localStorage.setItem(LS.USER, member.name);
+  applySession(member);
+}
+
+function applySession(member) {
+  currentUser = member.name;
+  isSup       = !!member.isSupervisor;
+  filterMine  = !isSup; // supervisor ve todo; el resto ve solo las suyas por defecto
+
+  document.getElementById('sessAv').textContent   = initials(member.name);
+  document.getElementById('sessName').textContent = member.name;
+  hideLogin();
+  renderBoard();
+  updateUrgentBadge();
+}
+
+function doLogout() {
+  localStorage.removeItem(LS.USER);
+  currentUser   = null;
+  isSup         = false;
+  filterMine    = false;
+  filterDept    = 'todos';
+  filterUrgent  = false;
+  document.getElementById('sessAv').textContent   = '--';
+  document.getElementById('sessName').textContent = '—';
+  document.getElementById('loginSelect').value    = '';
+  showLogin();
+}
+
+// ============================================================
+// UTILS
+// ============================================================
+function initials(s) {
+  return (s || '').split(/[\s\-\/,]+/).slice(0,2).map(w => (w[0]||'').toUpperCase()).join('');
+}
+function deptColor(d) { return DEPTS[d] || '#00C9CE'; }
+function prioClass(p) { return PRIO_CLASS[p] || 'pM'; }
+function genId()      { return (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Date.now() + '-' + Math.random().toString(36).slice(2); }
+
+function toast(msg, type = 'ts') {
+  const wrap = document.getElementById('tw');
+  const el   = document.createElement('div');
+  el.className   = `toast ${type}`;
+  el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .3s'; setTimeout(() => el.remove(), 300); }, 3400);
+}
+
+function copyAccess() {
+  navigator.clipboard.writeText(window.location.href)
+    .then(()  => toast('🔗 Enlace copiado — compártelo con el equipo', 'ts'))
+    .catch(()  => toast('Copia esta URL: ' + window.location.href, 'tw2'));
+}
+
+// ============================================================
+// NAVEGACIÓN
+// ============================================================
+const PAGE_TITLES = { kanban:'Tablero Kanban', departamentos:'Por Departamento', resumen:'Resumen Ejecutivo', carga:'Cargar Reunión', config:'Configuración' };
+
+function gp(name, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.sni').forEach(n => n.classList.remove('on'));
+  document.getElementById('page-' + name).classList.add('on');
+  if (el) el.classList.add('on');
+  document.getElementById('ttl').textContent = PAGE_TITLES[name] || name;
+  if (name === 'departamentos') renderDepts();
+  if (name === 'resumen')       renderResumen();
+  if (name === 'kanban')        renderBoard();
+}
+
+// ============================================================
+// FILTRO INTELIGENTE
+// ============================================================
+function getVisibleTasks() {
+  let result = tasks;
+  // Supervisor ve todo; el resto filtra por su nombre cuando filterMine está activo
+  if (filterMine && currentUser && !isSup) {
+    const first = currentUser.split(' ')[0].toLowerCase();
+    result = result.filter(t => t.resp && t.resp.toLowerCase().includes(first));
+  }
+  if (filterDept !== 'todos') result = result.filter(t => t.dept === filterDept);
+  if (filterUrgent)           result = result.filter(t => t.prio === 'Urgente' && t.estado !== 'Completado');
+  return result;
+}
+
+function setFilterMine()  { filterMine = true;  filterDept = 'todos'; filterUrgent = false; renderBoard(); }
+function setFilterAll()   { filterMine = false; filterDept = 'todos'; filterUrgent = false; renderBoard(); }
+function setFilterDept(d) { filterDept = d; filterUrgent = false; renderBoard(); }
+function toggleUrgent()   { filterUrgent = !filterUrgent; if (filterUrgent) filterDept = 'todos'; renderBoard(); }
+
+// ============================================================
+// KANBAN
+// ============================================================
+function updateUrgentBadge() {
+  const n = tasks.filter(t => t.prio === 'Urgente' && t.estado !== 'Completado').length;
+  const b = document.getElementById('buru');
+  b.textContent = n;
+  b.style.display = n ? '' : 'none';
+}
+
+function renderBoard() {
+  const visible = getVisibleTasks();
+  const counts  = { 'Pendiente':0, 'En progreso':0, 'Completado':0, 'Bloqueado':0 };
+  visible.forEach(t => { if (counts[t.estado] !== undefined) counts[t.estado]++; });
+
+  // Stats strip
+  document.getElementById('stats').innerHTML = [
+    { n: visible.length,       l:'Total',      cls:'t', nc:'teal' },
+    { n: counts['Pendiente'],  l:'Pendientes', cls:'a', nc:'amb'  },
+    { n: counts['En progreso'],l:'En progreso',cls:'b', nc:'blu'  },
+    { n: counts['Completado'], l:'Completadas',cls:'g', nc:'grn'  },
+  ].map(s => `<div class="sc ${s.cls}"><div class="sn ${s.nc}">${s.n}</div><div class="sl">${s.l}</div></div>`).join('');
+
+  // Filter bar
+  let fhtml = '<span class="flbl">Filtrar:</span>';
+  if (!isSup && currentUser) {
+    fhtml += `<button class="fch ${filterMine ? 'active-mine' : ''}" onclick="setFilterMine()">⭐ Mis tareas</button>`;
+    fhtml += `<button class="fch ${!filterMine ? 'on' : ''}" onclick="setFilterAll()">Ver todo el equipo</button>`;
+  } else {
+    fhtml += ['todos', ...Object.keys(DEPTS)].map(d =>
+      `<button class="fch ${d === filterDept && !filterUrgent ? 'on' : ''}" onclick="setFilterDept('${d}')">${d === 'todos' ? 'Todos' : d}</button>`
+    ).join('');
+  }
+  fhtml += `<button class="fch ${filterUrgent ? 'uo' : ''}" onclick="toggleUrgent()">⚡ Urgentes</button>`;
+  document.getElementById('fbar').innerHTML = fhtml;
+
+  // Columns
+  document.getElementById('board').innerHTML = COLS.map(col => {
+    const cards = visible.filter(t => t.estado === col.key);
+    return `<div>
+      <div class="ch">
+        <span class="cdot ${col.dot}"></span>
+        <span class="cn">${col.key}</span>
+        <span class="cc ${col.cnt}">${cards.length}</span>
+      </div>
+      <div class="cbody">${cards.length ? cards.map(renderCard).join('') : '<div class="cempty">— Sin tareas —</div>'}</div>
+    </div>`;
   }).join('');
 }
-function rc(t){
-  const c=clr(t.dept);
-  const isM=currentUser&&t.resp&&t.resp.toLowerCase().includes((currentUser.split(' ')[0]||'').toLowerCase());
-  return`<div class="card${isM?' mine':''}" style="border-left-color:${c}" onclick="openModal(${t.id})">
-    ${t.bloqueos?'<div class="blkdot"></div>':''}
-    <div class="cdept" style="color:${c}"><span style="width:5px;height:5px;border-radius:50%;background:${c};display:inline-block"></span>${t.dept}</div>
+
+function renderCard(t) {
+  const color  = deptColor(t.dept);
+  const first  = (currentUser || '').split(' ')[0].toLowerCase();
+  const ismine = currentUser && t.resp && t.resp.toLowerCase().includes(first);
+  return `<div class="card${ismine ? ' is-mine' : ''}" style="border-left-color:${color}" onclick="openModal(${JSON.stringify(String(t.id))})">
+    ${t.bloqueos ? '<div class="blkdot"></div>' : ''}
+    <div class="cdept" style="color:${color}">
+      <span style="width:5px;height:5px;border-radius:50%;background:${color};display:inline-block"></span>
+      ${t.dept}
+    </div>
     <div class="ctit">${t.titulo}</div>
     <div class="cfoot">
-      <div class="cresp"><div class="av">${ini(t.resp)}</div>${t.resp.split(/[\/,]/)[0].trim()}</div>
-      <span class="pr p${pk(t.prio)}">${t.prio}</span>
+      <div class="cresp"><div class="av">${initials(t.resp)}</div>${t.resp.split(/[\/,]/)[0].trim()}</div>
+      <span class="pr ${prioClass(t.prio)}">${t.prio}</span>
     </div>
-    ${t.fecha?`<div class="cdate">📅 ${t.fecha}</div>`:''}
+    ${t.fecha ? `<div class="cdate">📅 ${t.fecha}</div>` : ''}
   </div>`;
 }
-function sf(d,btn){fDept=d;fUrg=false;renderBoard()}
-function tu(btn){fUrg=!fUrg;if(fUrg)fDept='todos';renderBoard()}
 
-// ═══ DEPARTAMENTOS ════════════════════════════════════
-function renderDepts(){
-  document.getElementById('dpage').innerHTML=Object.entries(DEPTS).map(([dept,color])=>{
-    const dt=TAREAS.filter(t=>t.dept===dept);if(!dt.length)return'';
-    const urg=dt.filter(t=>t.prio==='Urgente'&&t.estado!=='Completado').length;
-    return`<div class="dblk">
-      <div class="dhdr" style="border-left-color:${color}" onclick="togD(this)">
+// ============================================================
+// DEPARTAMENTOS
+// ============================================================
+function renderDepts() {
+  document.getElementById('dpage').innerHTML = Object.entries(DEPTS).map(([dept, color]) => {
+    const dt  = tasks.filter(t => t.dept === dept);
+    if (!dt.length) return '';
+    const urg = dt.filter(t => t.prio === 'Urgente' && t.estado !== 'Completado').length;
+    return `<div class="dblk">
+      <div class="dhdr" style="border-left-color:${color}" onclick="this.nextElementSibling.classList.toggle('op')">
         <div class="ddot" style="background:${color}"></div>
         <span class="dname">${dept}</span>
-        ${urg?`<span class="dbdg durg">${urg} urgente${urg>1?'s':''}</span>`:''}
+        ${urg ? `<span class="dbdg durg">${urg} urgente${urg > 1 ? 's' : ''}</span>` : ''}
         <span class="dbdg dcnt">${dt.length} tareas</span>
         <span style="color:var(--text3);font-size:11px;margin-left:4px">▾</span>
       </div>
       <div class="dbody op">
         <table class="dtable">
           <tr><th>Tarea</th><th>Responsable</th><th>Prioridad</th><th>Estado</th><th>Fecha</th></tr>
-          ${dt.map(t=>`<tr onclick="openModal(${t.id})">
+          ${dt.map(t => `<tr onclick="openModal(${JSON.stringify(String(t.id))})">
             <td class="tm">${t.titulo}</td>
             <td>${t.resp.split(/[\/,]/)[0].trim()}</td>
-            <td><span class="pr p${pk(t.prio)}">${t.prio}</span></td>
-            <td class="${t.estado==='Completado'?'stC':t.estado==='En progreso'?'stE':t.estado==='Bloqueado'?'stB':'stP'}">${t.estado}</td>
-            <td>${t.fecha||'—'}</td>
+            <td><span class="pr ${prioClass(t.prio)}">${t.prio}</span></td>
+            <td class="${t.estado === 'Completado' ? 'stC' : t.estado === 'En progreso' ? 'stE' : t.estado === 'Bloqueado' ? 'stB' : 'stP'}">${t.estado}</td>
+            <td>${t.fecha || '—'}</td>
           </tr>`).join('')}
         </table>
       </div>
     </div>`;
   }).join('');
 }
-function togD(h){h.nextElementSibling.classList.toggle('op')}
 
-// ═══ RESUMEN ══════════════════════════════════════════
-function renderResumen(){
-  document.getElementById('rg').innerHTML=Object.entries(DEPTS).map(([dept,color])=>{
-    const dt=TAREAS.filter(t=>t.dept===dept);
-    const done=dt.filter(t=>t.estado==='Completado').length;
-    const prog=dt.filter(t=>t.estado==='En progreso').length;
-    const urg=dt.filter(t=>t.prio==='Urgente'&&t.estado!=='Completado').length;
-    const pct=dt.length?Math.round(done/dt.length*100):0;
-    return`<div class="rc">
-      <div class="rdrow"><span class="rddot" style="background:${color}"></span><span class="rdname">${dept}</span>${urg?`<span class="pr pU" style="margin-left:auto">${urg} urg.</span>`:''}</div>
+// ============================================================
+// RESUMEN EJECUTIVO
+// ============================================================
+function renderResumen() {
+  document.getElementById('rg').innerHTML = Object.entries(DEPTS).map(([dept, color]) => {
+    const dt   = tasks.filter(t => t.dept === dept);
+    const done = dt.filter(t => t.estado === 'Completado').length;
+    const prog = dt.filter(t => t.estado === 'En progreso').length;
+    const urg  = dt.filter(t => t.prio === 'Urgente' && t.estado !== 'Completado').length;
+    const pct  = dt.length ? Math.round(done / dt.length * 100) : 0;
+    return `<div class="rc">
+      <div class="rdrow">
+        <span class="rddot" style="background:${color}"></span>
+        <span class="rdname">${dept}</span>
+        ${urg ? `<span class="pr pU" style="margin-left:auto">${urg} urg.</span>` : ''}
+      </div>
       <div class="ptrack"><div class="pfill" style="width:${pct}%;background:${color}"></div></div>
       <div class="rnums">
         <span class="rnum"><strong>${done}</strong> hechas</span>
         <span class="rnum"><strong>${prog}</strong> en curso</span>
-        <span class="rnum"><strong>${dt.length-done}</strong> pend.</span>
+        <span class="rnum"><strong>${dt.length - done}</strong> pend.</span>
         <span class="rnum" style="margin-left:auto"><strong>${pct}%</strong></span>
       </div>
     </div>`;
   }).join('');
 }
 
-// ═══ MODAL ════════════════════════════════════════════
-function openModal(id){
-  const t=TAREAS.find(x=>x.id===id);if(!t)return;
-  prevEst[id]=t.estado;const c=clr(t.dept);
-  document.getElementById('mttl').textContent=t.titulo;
-  document.getElementById('mbody').innerHTML=`
+// ============================================================
+// MODAL — VER Y EDITAR TAREA
+// ============================================================
+function openModal(id) {
+  const t = tasks.find(x => String(x.id) === String(id));
+  if (!t) return;
+  prevStatus[id] = t.estado;
+  const color = deptColor(t.dept);
+  document.getElementById('mttl').textContent = t.titulo;
+  document.getElementById('mbody').innerHTML = `
     <div class="mdbrow">
-      <div class="mdba" style="background:${c}15;color:${c};border:1px solid ${c}28">
-        <span style="width:5px;height:5px;border-radius:50%;background:${c};display:inline-block"></span>${t.dept}
+      <div class="mdba" style="background:${color}18;color:${color};border:1px solid ${color}30">
+        <span style="width:5px;height:5px;border-radius:50%;background:${color};display:inline-block"></span>${t.dept}
       </div>
-      <span class="pr p${pk(t.prio)}">${t.prio}</span>
+      <span class="pr ${prioClass(t.prio)}">${t.prio}</span>
     </div>
-    <div class="mf"><label>Responsable</label><div class="mv" style="display:flex;align-items:center;gap:8px"><div class="av" style="width:24px;height:24px;font-size:9px">${ini(t.resp)}</div>${t.resp}</div></div>
+    <div class="mf"><label>Responsable</label>
+      <div class="mv" style="display:flex;align-items:center;gap:8px">
+        <div class="av" style="width:24px;height:24px;font-size:9px">${initials(t.resp)}</div>${t.resp}
+      </div>
+    </div>
     <div class="mg">
-      <div class="mf"><label>Estado</label><select class="ms" id="mest">${['Pendiente','En progreso','Completado','Bloqueado'].map(s=>`<option ${t.estado===s?'selected':''}>${s}</option>`).join('')}</select></div>
-      <div class="mf"><label>Prioridad</label><select class="ms" id="mpri">${['Urgente','Alta','Media','Baja'].map(p=>`<option ${t.prio===p?'selected':''}>${p}</option>`).join('')}</select></div>
+      <div class="mf"><label>Estado</label>
+        <select class="ms" id="m-status">
+          ${['Pendiente','En progreso','Completado','Bloqueado'].map(s => `<option ${t.estado === s ? 'selected' : ''}>${s}</option>`).join('')}
+        </select>
+      </div>
+      <div class="mf"><label>Prioridad</label>
+        <select class="ms" id="m-prio">
+          ${['Urgente','Alta','Media','Baja'].map(p => `<option ${t.prio === p ? 'selected' : ''}>${p}</option>`).join('')}
+        </select>
+      </div>
     </div>
-    <div class="mf"><label>Fecha límite</label><input class="mi" id="mfech" value="${t.fecha}" placeholder="dd/mm/aaaa"></div>
-    <div class="mf"><label>Plan de acción</label><div class="mv">${t.accion||'—'}</div></div>
-    ${t.bloqueos?`<div class="mf"><label style="color:#fca5a5">Bloqueos</label><div class="mv blk">${t.bloqueos}</div></div>`:''}
-    <div class="mf"><label>Notas / actualización</label><textarea class="mta" id="mnot" rows="3">${t.notas||''}</textarea></div>
-    <button class="msave" onclick="saveModal(${id})">Guardar cambios</button>`;
+    <div class="mf"><label>Fecha límite</label>
+      <input class="mi" id="m-fecha" value="${t.fecha || ''}" placeholder="dd/mm/aaaa">
+    </div>
+    <div class="mf"><label>Plan de acción</label><div class="mv">${t.accion || '—'}</div></div>
+    ${t.bloqueos ? `<div class="mf"><label style="color:#fca5a5">Bloqueos</label><div class="mv blk">${t.bloqueos}</div></div>` : ''}
+    <div class="mf"><label>Notas / actualización</label>
+      <textarea class="mta" id="m-notas" rows="3">${t.notas || ''}</textarea>
+    </div>
+    <button class="msave" onclick="saveModal(${JSON.stringify(String(id))})">Guardar cambios</button>`;
   document.getElementById('ov').classList.add('op');
 }
-async function saveModal(id){
-  const t=TAREAS.find(x=>x.id===id);if(!t)return;
-  const prev=prevEst[id];
-  t.estado=document.getElementById('mest').value;
-  t.prio=document.getElementById('mpri').value;
-  t.fecha=document.getElementById('mfech').value;
-  t.notas=document.getElementById('mnot').value;
-  saveTareas();closeModal();renderBoard();updUrg();toast('✓ Tarea actualizada y guardada','ts');
-  if(prev!=='Completado'&&t.estado==='Completado')await sendEmail('d',t);
-  if(prev!=='Bloqueado'&&t.estado==='Bloqueado')await sendEmail('b',t);
+
+async function saveModal(id) {
+  const t = tasks.find(x => String(x.id) === String(id));
+  if (!t) return;
+  const prev = prevStatus[id];
+  t.estado = document.getElementById('m-status').value;
+  t.prio   = document.getElementById('m-prio').value;
+  t.fecha  = document.getElementById('m-fecha').value;
+  t.notas  = document.getElementById('m-notas').value;
+
+  syncStorage();          // guardar antes de cerrar
+  closeModal();
+  renderBoard();
+  updateUrgentBadge();
+  toast('✓ Tarea guardada', 'ts');
+
+  if (prev !== 'Completado' && t.estado === 'Completado') await sendAlert('done', t);
+  if (prev !== 'Bloqueado'  && t.estado === 'Bloqueado')  await sendAlert('blocked', t);
 }
-function nuevaTarea(){
-  document.getElementById('mttl').textContent='Nueva tarea';
-  document.getElementById('mbody').innerHTML=`
-    <div class="mf"><label>Título</label><input class="mi" id="nt" placeholder="Describe la tarea..."></div>
-    <div class="mg">
-      <div class="mf"><label>Departamento</label><select class="ms" id="nd">${Object.keys(DEPTS).map(d=>`<option>${d}</option>`).join('')}</select></div>
-      <div class="mf"><label>Responsable</label><input class="mi" id="nr" placeholder="Nombre"></div>
+
+function nuevaTarea() {
+  document.getElementById('mttl').textContent = 'Nueva tarea';
+  document.getElementById('mbody').innerHTML = `
+    <div class="mf"><label>Título</label>
+      <input class="mi" id="nt-titulo" placeholder="Describe la tarea...">
     </div>
     <div class="mg">
-      <div class="mf"><label>Prioridad</label><select class="ms" id="np">${['Urgente','Alta','Media','Baja'].map(p=>`<option>${p}</option>`).join('')}</select></div>
-      <div class="mf"><label>Fecha límite</label><input class="mi" id="nf" placeholder="dd/mm/aaaa"></div>
+      <div class="mf"><label>Departamento</label>
+        <select class="ms" id="nt-dept">${Object.keys(DEPTS).map(d => `<option>${d}</option>`).join('')}</select>
+      </div>
+      <div class="mf"><label>Responsable</label>
+        <select class="ms" id="nt-resp">
+          ${TEAM.map(m => `<option ${m.name === currentUser ? 'selected' : ''}>${m.name}</option>`).join('')}
+        </select>
+      </div>
     </div>
-    <div class="mf"><label>Plan de acción</label><textarea class="mta" id="na" rows="2" placeholder="¿Qué hay que hacer?"></textarea></div>
-    <div class="mf"><label>Bloqueos (opcional)</label><input class="mi" id="nb" placeholder="¿Algún impedimento?"></div>
-    <button class="msave" onclick="crearT()">Crear tarea</button>`;
+    <div class="mg">
+      <div class="mf"><label>Prioridad</label>
+        <select class="ms" id="nt-prio">${['Urgente','Alta','Media','Baja'].map(p => `<option>${p}</option>`).join('')}</select>
+      </div>
+      <div class="mf"><label>Fecha límite</label>
+        <input class="mi" id="nt-fecha" placeholder="dd/mm/aaaa">
+      </div>
+    </div>
+    <div class="mf"><label>Acción concreta</label>
+      <textarea class="mta" id="nt-accion" rows="2" placeholder="¿Qué hay que hacer exactamente?"></textarea>
+    </div>
+    <div class="mf"><label>Bloqueos (opcional)</label>
+      <input class="mi" id="nt-bloqueos" placeholder="¿Hay algún impedimento?">
+    </div>
+    <button class="msave" onclick="crearTarea()">Crear tarea</button>`;
   document.getElementById('ov').classList.add('op');
 }
-function crearT(){
-  const tit=document.getElementById('nt').value.trim();
-  if(!tit){toast('Escribe el título','te');return}
-  TAREAS.push({id:Date.now(),dept:document.getElementById('nd').value,titulo:tit,
-    resp:document.getElementById('nr').value||currentUser||'Sin asignar',prio:document.getElementById('np').value,
-    estado:'Pendiente',fecha:document.getElementById('nf').value,
-    accion:document.getElementById('na').value,bloqueos:document.getElementById('nb').value,notas:''});
-  saveTareas();closeModal();renderBoard();updUrg();toast('✓ Tarea creada y guardada','ts');
+
+function crearTarea() {
+  const titulo = document.getElementById('nt-titulo').value.trim();
+  if (!titulo) { toast('Escribe el título de la tarea', 'te'); return; }
+  tasks.push({
+    id:       genId(),
+    dept:     document.getElementById('nt-dept').value,
+    titulo,
+    resp:     document.getElementById('nt-resp').value || currentUser || 'Sin asignar',
+    prio:     document.getElementById('nt-prio').value,
+    estado:   'Pendiente',
+    fecha:    document.getElementById('nt-fecha').value,
+    accion:   document.getElementById('nt-accion').value,
+    bloqueos: document.getElementById('nt-bloqueos').value,
+    notas:    '',
+  });
+  syncStorage();
+  closeModal();
+  renderBoard();
+  updateUrgentBadge();
+  toast('✓ Tarea creada', 'ts');
 }
-function closeModal(e){
-  if(e&&e.target!==document.getElementById('ov'))return;
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('ov')) return;
   document.getElementById('ov').classList.remove('op');
 }
 
-// ═══ IA ═══════════════════════════════════════════════
-function saveKey(){
-  const k=document.getElementById('apikey').value.trim();if(!k)return;
-  localStorage.setItem('oe_key',k);
-  document.getElementById('aok').style.display='block';
-  document.getElementById('bia').style.display='';
-  toast('✓ API Key guardada','ts');
+// ============================================================
+// PROCESADO IA — importar() con IDs únicos y syncStorage
+// ============================================================
+function saveKey() {
+  const k = document.getElementById('apikey').value.trim();
+  if (!k) return;
+  localStorage.setItem(LS.APIKEY, k);
+  document.getElementById('aok').style.display = 'block';
+  document.getElementById('bia').style.display = '';
+  toast('✓ API Key guardada', 'ts');
 }
-async function procIA(){
-  const txt=document.getElementById('rein').value.trim();
-  if(!txt){toast('Pega el resumen primero','te');return}
-  const k=localStorage.getItem('oe_key');
-  if(!k){toast('Configura tu API Key primero','te');return}
-  document.getElementById('pbtxt').style.display='none';
-  document.getElementById('pbspin').style.display='flex';
-  document.getElementById('pb').disabled=true;
+
+async function procIA() {
+  const txt = document.getElementById('rein').value.trim();
+  if (!txt) { toast('Pega el resumen de la reunión', 'te'); return; }
+  const apiKey = localStorage.getItem(LS.APIKEY);
+  if (!apiKey) { toast('Configura tu API Key de Anthropic primero', 'te'); return; }
+
+  document.getElementById('pbtxt').style.display  = 'none';
+  document.getElementById('pbspin').style.display = 'flex';
+  document.getElementById('pb').disabled          = true;
   document.getElementById('rb').classList.remove('sh');
-  const prompt=`Eres el asistente operacional de Onus Express, empresa de mensajería.
+
+  const teamNames = TEAM.map(t => t.name).join(', ');
+  const deptList  = Object.keys(DEPTS).join('", "');
+  const prompt    = `Eres el asistente operacional de Onus Express.
+Equipo: ${teamNames}.
+Departamentos válidos: "${deptList}".
+
 Analiza el siguiente resumen de reunión y extrae TODAS las tareas accionables.
-Por cada tarea devuelve un objeto JSON con: titulo (max 85 chars), dept (uno exacto de: "Operaciones","Comercial","Administración","RRHH","Flota","Marketing-Tech","Operaciones Locales","Atención Cliente"), resp, prio ("Urgente","Alta","Media","Baja"), fecha (dd/mm/aaaa o ""), accion, bloqueos ("" si no hay).
-RESPONDE ÚNICAMENTE con array JSON válido, sin markdown.\n\nRESUMEN:\n${txt}`;
-  try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:2000,messages:[{role:'user',content:prompt}]})});
-    const data=await res.json();
-    if(data.error)throw new Error(data.error.message);
-    const raw=data.content.map(b=>b.text||'').join('').replace(/```json|```/g,'').trim();
-    buf=JSON.parse(raw);
-    document.getElementById('tprevs').innerHTML=buf.map(t=>{
-      const c=clr(t.dept);
-      return`<div class="tp"><div class="tpdot" style="background:${c}"></div><div class="tptit">${t.titulo}</div>
-      <span class="tpdept" style="background:${c}15;color:${c}">${t.dept}</span>
-      <span class="pr p${pk(t.prio)}">${t.prio}</span></div>`;
+Devuelve ÚNICAMENTE un array JSON válido (sin markdown, sin texto extra).
+Cada objeto debe tener: titulo (string, máx 85 chars), dept (exacto del listado), resp (nombre exacto del equipo), prio ("Urgente"|"Alta"|"Media"|"Baja"), fecha (dd/mm/aaaa o ""), accion (string), bloqueos (string o "").
+
+RESUMEN:
+${txt}`;
+
+  try {
+    const res  = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key':    apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:2000, messages:[{ role:'user', content:prompt }] }),
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    const raw  = data.content.map(b => b.text || '').join('').replace(/```json|```/g,'').trim();
+    importBuffer = JSON.parse(raw);
+    document.getElementById('tprevs').innerHTML = importBuffer.map(t => {
+      const c = deptColor(t.dept);
+      return `<div class="tp">
+        <div class="tpdot" style="background:${c}"></div>
+        <div class="tptit">${t.titulo}</div>
+        <span class="tpdept" style="background:${c}18;color:${c}">${t.dept}</span>
+        <span class="pr ${prioClass(t.prio)}">${t.prio}</span>
+      </div>`;
     }).join('');
     document.getElementById('rb').classList.add('sh');
-    toast(`✓ ${buf.length} tareas detectadas`,'ts');
-  }catch(e){toast('Error: '+e.message,'te')}
-  finally{
-    document.getElementById('pbtxt').style.display='';
-    document.getElementById('pbspin').style.display='none';
-    document.getElementById('pb').disabled=false;
+    toast(`✓ ${importBuffer.length} tareas detectadas — revisa e importa`, 'ts');
+  } catch (err) {
+    toast('Error al procesar: ' + err.message, 'te');
+  } finally {
+    document.getElementById('pbtxt').style.display  = '';
+    document.getElementById('pbspin').style.display = 'none';
+    document.getElementById('pb').disabled          = false;
   }
 }
-function importar(){
-  buf.forEach(t=>TAREAS.push({
-    id:Date.now()+Math.floor(Math.random()*9999),
-    dept:t.dept||'Operaciones',titulo:t.titulo,
-    resp:t.resp||currentUser||'Sin asignar',
-    prio:t.prio||'Media',estado:'Pendiente',
-    fecha:t.fecha||'',accion:t.accion||'',bloqueos:t.bloqueos||'',notas:''
-  }));
-  const n=buf.length;buf=[];
-  saveTareas();
+
+function importar() {
+  if (!importBuffer.length) return;
+  importBuffer.forEach(t => {
+    tasks.push({
+      id:       genId(),               // ID único garantizado
+      dept:     t.dept     || 'Operaciones',
+      titulo:   t.titulo,
+      resp:     t.resp     || currentUser || 'Sin asignar',
+      prio:     t.prio     || 'Media',
+      estado:   'Pendiente',
+      fecha:    t.fecha    || '',
+      accion:   t.accion   || '',
+      bloqueos: t.bloqueos || '',
+      notas:    '',
+    });
+  });
+  const n = importBuffer.length;
+  importBuffer = [];
+  syncStorage();                       // guardar antes de redirigir
   document.getElementById('rb').classList.remove('sh');
-  document.getElementById('rein').value='';
-  toast('✓ '+n+' tareas importadas y guardadas','ts');
-  const nav=document.querySelector('.sni');
-  gp('kanban',nav);if(nav)nav.classList.add('on');
-  renderBoard();updUrg();
+  document.getElementById('rein').value = '';
+  toast(`✓ ${n} tareas importadas y guardadas`, 'ts');
+  // Redirigir al kanban
+  const firstNav = document.querySelector('.sni');
+  gp('kanban', firstNav);
+  if (firstNav) firstNav.classList.add('on');
+  renderBoard();
+  updateUrgentBadge();
 }
 
-// ═══ CONFIG ═══════════════════════════════════════════
-function saveCfg(){
-  localStorage.setItem(KC,JSON.stringify({
-    pk:document.getElementById('cpk').value.trim(),
-    svc:document.getElementById('csvc').value.trim(),
-    td:document.getElementById('ctd').value.trim(),
-    tr:document.getElementById('ctr').value.trim(),
-    sup:document.getElementById('csup').value.trim()
-  }));initEJS();toast('✓ Configuración EmailJS guardada','ts');
+// ============================================================
+// EMAILJS — ALERTAS AUTOMÁTICAS
+// ============================================================
+function initEmailJS() {
+  const c = getCfg();
+  if (c.pk) { try { emailjs.init(c.pk); } catch(_) {} }
 }
-function saveAv(){
-  localStorage.setItem(KA,JSON.stringify({d:document.getElementById('avd').checked,b:document.getElementById('avb').checked,m:document.getElementById('avm').checked}));
-  toast('✓ Reglas guardadas','ts');
+
+async function sendAlert(type, t) {
+  const cfg = getCfg(), av = getAviso();
+  if (!cfg.pk || !cfg.svc) return;
+  if (type === 'done'    && !av.done)    return;
+  if (type === 'blocked' && !av.blocked) return;
+  const tmplId = type === 'done' ? cfg.td : cfg.tr;
+  if (!tmplId) return;
+  const now = new Date().toLocaleDateString('es-ES', { weekday:'long', day:'numeric', month:'long', hour:'2-digit', minute:'2-digit' });
+  try {
+    await emailjs.send(cfg.svc, tmplId, {
+      supervisor:     cfg.sup || '',
+      to_email:       cfg.sup || '',
+      responsable:    t.resp,
+      tarea_titulo:   t.titulo,
+      departamento:   t.dept,
+      prioridad:      t.prio,
+      estado:         t.estado,
+      fecha_limite:   t.fecha || '—',
+      accion:         t.accion || '—',
+      notas:          t.notas || '—',
+      modificado_por: currentUser || '—',
+      fecha_cambio:   now,
+      url_tablero:    window.location.href,
+    });
+    toast('📧 Aviso enviado al supervisor', 'ts');
+  } catch(e) { console.warn('EmailJS:', e); }
 }
-function renderEmap(){
-  const m=gm();
-  document.getElementById('emap').innerHTML=TEAM.map(t=>`
+
+function checkMondayAlert() {
+  const av = getAviso();
+  if (!av.monday) return;
+  const now = new Date();
+  if (now.getDay() !== 1) return;
+  const key = 'oe_monday_' + now.toDateString();
+  if (localStorage.getItem(key)) return;
+  const urgent = tasks.filter(t => t.prio === 'Urgente' && t.estado !== 'Completado');
+  if (!urgent.length) return;
+  const cfg = getCfg();
+  if (!cfg.pk || !cfg.svc || !cfg.tr) return;
+  emailjs.send(cfg.svc, cfg.tr, {
+    supervisor: cfg.sup || '', to_email: cfg.sup || '',
+    num_urgentes: urgent.length,
+    lista_tareas: urgent.map(t => `• ${t.titulo} — ${t.resp}`).join('\n'),
+    fecha_cambio: now.toLocaleDateString('es-ES', { weekday:'long', day:'numeric', month:'long' }),
+    url_tablero:  window.location.href,
+    tarea_titulo: `${urgent.length} urgentes pendientes`, departamento:'Varios',
+    responsable:'Equipo', prioridad:'Urgente', estado:'Pendiente',
+    fecha_limite:'—', accion:'—', notas:'—', modificado_por:'Sistema',
+  }).then(() => {
+    localStorage.setItem(key, '1');
+    toast(`🔔 Recordatorio enviado: ${urgent.length} urgentes`, 'tw2');
+  }).catch(() => {});
+}
+
+// ============================================================
+// CONFIGURACIÓN
+// ============================================================
+function saveCfg() {
+  localStorage.setItem(LS.CFG, JSON.stringify({
+    pk:  document.getElementById('cpk').value.trim(),
+    svc: document.getElementById('csvc').value.trim(),
+    td:  document.getElementById('ctd').value.trim(),
+    tr:  document.getElementById('ctr').value.trim(),
+    sup: document.getElementById('csup').value.trim(),
+  }));
+  initEmailJS();
+  toast('✓ Configuración EmailJS guardada', 'ts');
+}
+
+function saveAv() {
+  localStorage.setItem(LS.AVISO, JSON.stringify({
+    done:    document.getElementById('avd').checked,
+    blocked: document.getElementById('avb').checked,
+    monday:  document.getElementById('avm').checked,
+  }));
+  toast('✓ Reglas de aviso guardadas', 'ts');
+}
+
+function renderEmap() {
+  const saved = getMails();
+  document.getElementById('emap').innerHTML = TEAM.map(m => `
     <div class="er">
-      <span class="el">${t.n}</span>
-      <input class="cfi" id="em_${t.n.replace(/\s/g,'_')}" value="${m[t.n]||t.e}" placeholder="${t.e}">
+      <span class="el">${m.name}</span>
+      <input class="cfi" id="mail_${m.name.replace(/\s/g,'_')}" value="${saved[m.name] || m.email}" placeholder="${m.email}">
     </div>`).join('');
 }
-function saveMails(){
-  const m={};
-  TEAM.forEach(t=>{const el=document.getElementById('em_'+t.n.replace(/\s/g,'_'));if(el&&el.value.trim())m[t.n]=el.value.trim()});
-  localStorage.setItem(KM,JSON.stringify(m));toast('✓ Correos guardados','ts');
+
+function saveMails() {
+  const result = {};
+  TEAM.forEach(m => {
+    const el = document.getElementById('mail_' + m.name.replace(/\s/g, '_'));
+    if (el && el.value.trim()) result[m.name] = el.value.trim();
+  });
+  localStorage.setItem(LS.MAILS, JSON.stringify(result));
+  toast('✓ Correos del equipo guardados', 'ts');
 }
 
-init();
+// ============================================================
+// ARRANQUE
+// ============================================================
+function init() {
+  // 1. Cargar tareas (localStorage tiene prioridad sobre SEED)
+  loadTasks();
+
+  // 2. Construir select del modal de login
+  buildLoginSelect();
+
+  // 3. Fecha en sidebar
+  document.getElementById('sbweek').textContent =
+    'Semana ' + new Date().toLocaleDateString('es-ES', { day:'numeric', month:'long', year:'numeric' });
+
+  // 4. Restaurar API key
+  const apiKey = localStorage.getItem(LS.APIKEY);
+  if (apiKey) {
+    document.getElementById('apikey').value  = apiKey;
+    document.getElementById('aok').style.display = 'block';
+    document.getElementById('bia').style.display = '';
+  }
+
+  // 5. Restaurar config EmailJS
+  const cfg = getCfg();
+  if (cfg.pk)  document.getElementById('cpk').value  = cfg.pk;
+  if (cfg.svc) document.getElementById('csvc').value = cfg.svc;
+  if (cfg.td)  document.getElementById('ctd').value  = cfg.td;
+  if (cfg.tr)  document.getElementById('ctr').value  = cfg.tr;
+  if (cfg.sup) document.getElementById('csup').value = cfg.sup;
+
+  // 6. Restaurar reglas de aviso
+  const av = getAviso();
+  document.getElementById('avd').checked = av.done    !== false;
+  document.getElementById('avb').checked = av.blocked !== false;
+  document.getElementById('avm').checked = av.monday  !== false;
+
+  // 7. Inicializar email map y EmailJS
+  renderEmap();
+  initEmailJS();
+
+  // 8. checkAuth() — muestra login modal o carga pizarra del usuario
+  checkAuth();
+
+  // 9. Recordatorio de urgentes si es lunes
+  setTimeout(checkMondayAlert, 2500);
+}
+
+// Arrancar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>
