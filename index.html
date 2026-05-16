@@ -233,6 +233,21 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 </style>
 </head>
 <body>
+<!-- ══ WELCOME MODAL ══════════════════════ -->
+<div class="wm-bg" id="wm-bg">
+  <div class="wm">
+    <div class="wm-logorow">
+      <div class="wm-mark"><span class="wm-mktxt">OE</span></div>
+      <div><div class="wm-bname">ONUS</div><div class="wm-bexp">EXPRESS</div></div>
+    </div>
+    <div class="wm-title">Intranet Operacional</div>
+    <div class="wm-sub">Identifícate para acceder a tu tablero de tareas semanal.</div>
+    <label class="wm-lbl">¿Quién eres?</label>
+    <select class="wm-sel" id="wm-sel"><option value="">— Selecciona tu nombre —</option></select>
+    <button class="wm-btn" onclick="doLogin()">Entrar al sistema</button>
+    <div class="wm-err" id="wm-err">Selecciona tu nombre para continuar.</div>
+  </div>
+</div>
 <div class="app">
   <aside class="sb">
     <div class="sb-logo">
@@ -240,6 +255,11 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <div class="sb-mark"><span class="sb-mark-txt">OE</span></div>
         <div><div class="sb-brand">ONUS</div><div class="sb-express">EXPRESS</div></div>
       </div>
+    </div>
+    <div class="sb-sess">
+      <div class="sb-sess-av" id="sb-av">--</div>
+      <span class="sb-sess-name" id="sb-nm">—</span>
+      <button class="sb-sess-out" onclick="doLogout()" title="Cambiar usuario">✕</button>
     </div>
     <div class="sb-week" id="sbweek"></div>
     <nav class="sb-nav">
@@ -261,6 +281,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       <div class="tb-dot"></div>
       <div><span class="tb-title" id="ttl">Tablero Kanban</span><span class="tb-sub" id="tsub"></span></div>
       <div class="tb-r">
+        <button class="btn cp" onclick="copyURL()">🔗 Copiar acceso</button>
         <button class="btn" onclick="gp('carga',null)">⊕ Nueva reunión</button>
         <button class="btn p" onclick="nuevaTarea()">+ Añadir tarea</button>
       </div>
@@ -359,6 +380,24 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 // ═══════════════════════════════════════════════════
 // BRAND & DATOS
 // ═══════════════════════════════════════════════════
+// ══ TEAM & EMAILS ══════════════════════════════════════════════════
+const TEAM=[
+  {n:'Junior De Freitas',  e:'jdefreitas@onusexpress.com', dept:'Operaciones',  sup:true},
+  {n:'Alejandro Meneses',  e:'ameneses@onusexpress.com',   dept:'Operaciones'},
+  {n:'Marta Ibars',        e:'mibars@onusexpress.com',     dept:'Operaciones'},
+  {n:'Miguel Pereira',     e:'miguel@onusexpress.com',     dept:'Operaciones'},
+  {n:'Valentin Issler',    e:'vissler@onusexpress.com',    dept:'Comercial'},
+  {n:'Andres',             e:'info@onusexpress.com',       dept:'Comercial'},
+  {n:'Patricia Moreno',    e:'amoreno@onusexpress.com',    dept:'RRHH'},
+  {n:'Maria Moreno',       e:'mmoreno@onusexpress.com',    dept:'RRHH'},
+  {n:'Diana Da Maia',      e:'diana@onusexpress.com',      dept:'RRHH'},
+  {n:'Yamir Diaz',         e:'flota@onusexpress.com',      dept:'Flota'},
+  {n:'Sebastian',          e:'sebastian@onusexpress.com',  dept:'Marketing-Tech'},
+];
+const RESPS=TEAM.map(t=>t.n);
+const SUPERVISOR='Junior De Freitas';
+
+// ══ BRAND ═══════════════════════════════════════════════════════════
 const DEPTS={
   "Operaciones":"#3b82f6","Comercial":"#00C9CE","Administración":"#f59e0b",
   "RRHH":"#ef4444","Flota":"#8b5cf6","Marketing-Tech":"#06b6d4",
@@ -368,7 +407,7 @@ const PK={Urgente:'U',Alta:'A',Media:'M',Baja:'B'};
 const COLS=[{k:'Pendiente',d:'dP',c:'ccP'},{k:'En progreso',d:'dE',c:'ccE'},{k:'Completado',d:'dC',c:'ccC'},{k:'Bloqueado',d:'dB',c:'ccB'}];
 const RESPS=['Junior','Diana','Sebas','María','Marta','Yamir','Patricia','Ricardo','Elio','Andrea','Marlon','Anderson','Miguel','Sebastián','Juanma','José','Miguel Ángel'];
 
-let TAREAS=[
+const _TD=[
   {id:1,dept:"Operaciones",titulo:"Licencia actividades Barcelona/Tarragona",resp:"Junior",prio:"Urgente",estado:"Pendiente",fecha:"26/05/2025",accion:"Firmar contrato Tarragona y enviar doc al bróker (100€+IVA, 15 días)",bloqueos:"Contrato sin firmar",notas:""},
   {id:2,dept:"Operaciones",titulo:"Pack Barcelona – repartidores y documentación",resp:"Junior",prio:"Urgente",estado:"Pendiente",fecha:"12/05/2025",accion:"Revisar ofertas y enviar doc de 2 repartidores urgente o cambiarlos",bloqueos:"Faltan repartidores",notas:""},
   {id:3,dept:"Operaciones",titulo:"Flujo operativo Almacén Bonfreu",resp:"Junior",prio:"Alta",estado:"Pendiente",fecha:"19/05/2025",accion:"Crear flujo operativo con almacén externo",bloqueos:"",notas:""},
@@ -398,9 +437,23 @@ let TAREAS=[
   {id:27,dept:"Operaciones Locales",titulo:"Tarragona – mudanza nave Ri Clar",resp:"Junior",prio:"Urgente",estado:"Pendiente",fecha:"01/06/2025",accion:"Operar en Ri Clar el 1 jun; confirmar internet; baja nave Riudoms",bloqueos:"Verificar cobertura internet",notas:""},
   {id:28,dept:"Operaciones Locales",titulo:"Tarragona – deuda bandas 2.000€",resp:"Miguel Ángel",prio:"Alta",estado:"Pendiente",fecha:"",accion:"Llamar para asumir problema y negociar pago del 50%",bloqueos:"Envío perdido frena pago central",notas:""},
   {id:29,dept:"Operaciones Locales",titulo:"Lugo – cobertura sábados",resp:"José",prio:"Alta",estado:"Pendiente",fecha:"",accion:"Pactar con José como fijo en fines de semana; remunerar a Alberto",bloqueos:"Pablo dejó 30 envíos sin entregar",notas:""},
-  {id:30,dept:"Atención Cliente",titulo:"Centralita – flyers y desvíos",resp:"Junior",prio:"Media",estado:"Pendiente",fecha:"",accion:"Entregar flyers; configurar centralita con desvíos MRV y Celeritas",bloqueos:"Paralizada hasta mudanza Orange",notas:""},
+  {id:30,dept:"Atención Cliente",titulo:"Centralita – flyers y desvíos",resp:"Junior De Freitas",prio:"Media",estado:"Pendiente",fecha:"",accion:"Entregar flyers; configurar centralita con desvíos MRV y Celeritas",bloqueos:"Paralizada hasta mudanza Orange",notas:""},
 ];
-let nid=31,fDept='todos',fUrg=false,buf=[],prevEst={};
+const TAREAS_DEFAULT=JSON.parse(JSON.stringify(_TD));
+let TAREAS=[];
+// ══ PERSIST ═══════════════════════════════════════════════════════
+const KT='oe_t3',KU='oe_u';
+const DEFAULT_TASKS_KEY='oe_defaults_loaded';
+function saveTareas(){localStorage.setItem(KT,JSON.stringify(TAREAS))}
+function loadTareas(){
+  const s=localStorage.getItem(KT);
+  if(s){try{TAREAS=JSON.parse(s);return}catch(e){}}
+  TAREAS=JSON.parse(JSON.stringify(TAREAS_DEFAULT));
+  saveTareas();
+}
+// ══ STATE ══════════════════════════════════════════════════════════
+let nid=Date.now(),fDept='todos',fUrg=false,fMine=false,buf=[],prevEst={};
+let currentUser=null,isSup=false;
 
 // ═══ UTILS ═══════════════════════════════════════════
 function pk(p){return PK[p]||'M'}
@@ -456,7 +509,44 @@ function chkLunes(){
 }
 
 // ═══ INIT ═════════════════════════════════════════════
+// ══ SESSION ════════════════════════════════════════════════════════
+function buildSel(){
+  const s=document.getElementById('wm-sel');
+  s.innerHTML='<option value="">— Selecciona tu nombre —</option>'+TEAM.map(t=>`<option value="${t.n}">${t.n} · ${t.dept}</option>`).join('');
+}
+function doLogin(){
+  const v=document.getElementById('wm-sel').value;
+  if(!v){document.getElementById('wm-err').style.display='block';return;}
+  localStorage.setItem(KU,v);applySession(v);
+}
+function doLogout(){
+  localStorage.removeItem(KU);currentUser=null;isSup=false;fMine=false;
+  document.getElementById('wm-bg').classList.remove('hidden');
+  document.getElementById('wm-sel').value='';
+  document.getElementById('wm-err').style.display='none';
+}
+function applySession(name){
+  currentUser=name;
+  isSup=(name===SUPERVISOR);
+  document.getElementById('wm-bg').classList.add('hidden');
+  document.getElementById('sb-av').textContent=ini(name);
+  document.getElementById('sb-nm').textContent=name;
+  if(!isSup){fMine=true;}
+  renderBoard();updUrg();
+}
+function checkSession(){
+  const s=localStorage.getItem(KU);
+  if(s&&TEAM.find(t=>t.n===s)){applySession(s);}
+}
+function copyURL(){
+  navigator.clipboard.writeText(window.location.href)
+    .then(()=>toast('🔗 Enlace copiado — compártelo con el equipo','ts'))
+    .catch(()=>toast('URL: '+window.location.href,'tw2'));
+}
+
 function init(){
+  loadTareas();
+  buildSel();
   const d=new Date();
   document.getElementById('sbweek').textContent='Semana '+d.toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'});
   const k=localStorage.getItem('oe_key');
@@ -471,8 +561,9 @@ function init(){
   document.getElementById('avd').checked=av.d!==false;
   document.getElementById('avb').checked=av.b!==false;
   document.getElementById('avm').checked=av.m!==false;
-  renderEmap();initEJS();renderBoard();updUrg();
-  setTimeout(chkLunes,2000);
+  renderEmap();initEJS();updUrg();
+  checkSession();
+  setTimeout(chkLunes,2500);
 }
 
 // ═══ NAV ══════════════════════════════════════════════
@@ -491,10 +582,16 @@ function gp(name,el){
 // ═══ KANBAN ═══════════════════════════════════════════
 function tv(){
   let t=TAREAS;
+  if(fMine&&currentUser&&!isSup){
+    const fn=currentUser.split(' ')[0].toLowerCase();
+    t=t.filter(x=>x.resp&&x.resp.toLowerCase().includes(fn));
+  }
   if(fDept!=='todos')t=t.filter(x=>x.dept===fDept);
   if(fUrg)t=t.filter(x=>x.prio==='Urgente'&&x.estado!=='Completado');
   return t;
 }
+function setMine(){fMine=true;fDept='todos';fUrg=false;renderBoard()}
+function setAll(){fMine=false;fDept='todos';fUrg=false;renderBoard()}
 function updUrg(){
   const n=TAREAS.filter(t=>t.prio==='Urgente'&&t.estado!=='Completado').length;
   const b=document.getElementById('buru');b.textContent=n;b.style.display=n?'':'none';
@@ -507,11 +604,15 @@ function renderBoard(){
     {n:vis.length,l:'Total',cls:'t',nc:'teal'},{n:cnt['Pendiente'],l:'Pendientes',cls:'a',nc:'amb'},
     {n:cnt['En progreso'],l:'En progreso',cls:'b',nc:'blu'},{n:cnt['Completado'],l:'Completadas',cls:'g',nc:'grn'}
   ].map(s=>`<div class="sc ${s.cls}"><div class="sn ${s.nc}">${s.n}</div><div class="sl">${s.l}</div></div>`).join('');
-  const depts=['todos',...Object.keys(DEPTS)];
-  document.getElementById('fbar').innerHTML=
-    `<span class="flbl">Filtrar:</span>`+
-    depts.map(d=>`<button class="fch ${d===fDept&&!fUrg?'on':''}" onclick="sf('${d}',this)">${d==='todos'?'Todos':d}</button>`).join('')+
-    `<button class="fch ${fUrg?'uo':''}" onclick="tu(this)">⚡ Urgentes</button>`;
+  let fhtml=`<span class="flbl">Filtrar:</span>`;
+  if(!isSup&&currentUser){
+    fhtml+=`<button class="fch ${fMine?'fmine':''}" onclick="setMine()">⭐ Mis tareas</button>`;
+    fhtml+=`<button class="fch ${!fMine?'on':''}" onclick="setAll()">Ver todo el equipo</button>`;
+  } else {
+    fhtml+=depts.map(d=>`<button class="fch ${d===fDept&&!fUrg?'on':''}" onclick="sf('${d}',this)">${d==='todos'?'Todos':d}</button>`).join('');
+  }
+  fhtml+=`<button class="fch ${fUrg?'uo':''}" onclick="tu(this)">⚡ Urgentes</button>`;
+  document.getElementById('fbar').innerHTML=fhtml;
   document.getElementById('board').innerHTML=COLS.map(col=>{
     const cards=vis.filter(t=>t.estado===col.k);
     return`<div><div class="ch"><span class="cdot ${col.d}"></span><span class="cn">${col.k}</span><span class="cc ${col.c}">${cards.length}</span></div>
@@ -520,7 +621,8 @@ function renderBoard(){
 }
 function rc(t){
   const c=clr(t.dept);
-  return`<div class="card" style="border-left-color:${c}" onclick="openModal(${t.id})">
+  const isM=currentUser&&t.resp&&t.resp.toLowerCase().includes((currentUser.split(' ')[0]||'').toLowerCase());
+  return`<div class="card${isM?' mine':''}" style="border-left-color:${c}" onclick="openModal(${t.id})">
     ${t.bloqueos?'<div class="blkdot"></div>':''}
     <div class="cdept" style="color:${c}"><span style="width:5px;height:5px;border-radius:50%;background:${c};display:inline-block"></span>${t.dept}</div>
     <div class="ctit">${t.titulo}</div>
@@ -616,7 +718,7 @@ async function saveModal(id){
   t.prio=document.getElementById('mpri').value;
   t.fecha=document.getElementById('mfech').value;
   t.notas=document.getElementById('mnot').value;
-  closeModal();renderBoard();updUrg();toast('✓ Tarea actualizada','ts');
+  saveTareas();closeModal();renderBoard();updUrg();toast('✓ Tarea actualizada y guardada','ts');
   if(prev!=='Completado'&&t.estado==='Completado')await sendEmail('d',t);
   if(prev!=='Bloqueado'&&t.estado==='Bloqueado')await sendEmail('b',t);
 }
@@ -640,11 +742,11 @@ function nuevaTarea(){
 function crearT(){
   const tit=document.getElementById('nt').value.trim();
   if(!tit){toast('Escribe el título','te');return}
-  TAREAS.push({id:nid++,dept:document.getElementById('nd').value,titulo:tit,
-    resp:document.getElementById('nr').value||'Sin asignar',prio:document.getElementById('np').value,
+  TAREAS.push({id:Date.now(),dept:document.getElementById('nd').value,titulo:tit,
+    resp:document.getElementById('nr').value||currentUser||'Sin asignar',prio:document.getElementById('np').value,
     estado:'Pendiente',fecha:document.getElementById('nf').value,
     accion:document.getElementById('na').value,bloqueos:document.getElementById('nb').value,notas:''});
-  closeModal();renderBoard();updUrg();toast('✓ Tarea creada','ts');
+  saveTareas();closeModal();renderBoard();updUrg();toast('✓ Tarea creada y guardada','ts');
 }
 function closeModal(e){
   if(e&&e.target!==document.getElementById('ov'))return;
@@ -696,13 +798,20 @@ RESPONDE ÚNICAMENTE con array JSON válido, sin markdown.\n\nRESUMEN:\n${txt}`;
   }
 }
 function importar(){
-  buf.forEach(t=>TAREAS.push({id:nid++,dept:t.dept||'Operaciones',titulo:t.titulo,resp:t.resp||'Sin asignar',prio:t.prio||'Media',estado:'Pendiente',fecha:t.fecha||'',accion:t.accion||'',bloqueos:t.bloqueos||'',notas:''}));
+  buf.forEach(t=>TAREAS.push({
+    id:Date.now()+Math.floor(Math.random()*9999),
+    dept:t.dept||'Operaciones',titulo:t.titulo,
+    resp:t.resp||currentUser||'Sin asignar',
+    prio:t.prio||'Media',estado:'Pendiente',
+    fecha:t.fecha||'',accion:t.accion||'',bloqueos:t.bloqueos||'',notas:''
+  }));
   const n=buf.length;buf=[];
+  saveTareas();
   document.getElementById('rb').classList.remove('sh');
   document.getElementById('rein').value='';
-  toast(`✓ ${n} tareas importadas`,'ts');
-  gp('kanban',document.querySelector('.sni'));
-  document.querySelector('.sni').classList.add('on');
+  toast('✓ '+n+' tareas importadas y guardadas','ts');
+  const nav=document.querySelector('.sni');
+  gp('kanban',nav);if(nav)nav.classList.add('on');
   renderBoard();updUrg();
 }
 
@@ -722,15 +831,15 @@ function saveAv(){
 }
 function renderEmap(){
   const m=gm();
-  document.getElementById('emap').innerHTML=RESPS.map(n=>`
+  document.getElementById('emap').innerHTML=TEAM.map(t=>`
     <div class="er">
-      <span class="el">${n}</span>
-      <input class="cfi" id="em_${n.replace(/\s/g,'_')}" value="${m[n]||''}" placeholder="${n.split(' ')[0].toLowerCase()}@onusexpress.com">
+      <span class="el">${t.n}</span>
+      <input class="cfi" id="em_${t.n.replace(/\s/g,'_')}" value="${m[t.n]||t.e}" placeholder="${t.e}">
     </div>`).join('');
 }
 function saveMails(){
   const m={};
-  RESPS.forEach(n=>{const el=document.getElementById('em_'+n.replace(/\s/g,'_'));if(el&&el.value.trim())m[n]=el.value.trim()});
+  TEAM.forEach(t=>{const el=document.getElementById('em_'+t.n.replace(/\s/g,'_'));if(el&&el.value.trim())m[t.n]=el.value.trim()});
   localStorage.setItem(KM,JSON.stringify(m));toast('✓ Correos guardados','ts');
 }
 
