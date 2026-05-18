@@ -1626,15 +1626,21 @@ function loadTasks() {
 // ============================================================
 // FIREBASE — base de datos compartida en tiempo real
 // ============================================================
+// ── CONFIG FIREBASE (hardcoded — compartida por todo el equipo) ──
+const FB_CFG = {
+  apiKey:            'AIzaSyB-BCzozjphUfItUCU33iZNO2yd1IQs-co',
+  authDomain:        'onus-intranet.firebaseapp.com',
+  databaseURL:       'https://onus-intranet-default-rtdb.europe-west1.firebasedatabase.app',
+  projectId:         'onus-intranet',
+  storageBucket:     'onus-intranet.firebasestorage.app',
+  messagingSenderId: '71813394883',
+  appId:             '1:71813394883:web:96f4ff7f16b7b7f50c8d76',
+};
+
 function initFirebase() {
-  const cfg = getCfg();
-  if (!cfg.fb_url) return false;
   try {
     if (!firebase.apps.length) {
-      firebase.initializeApp({
-        apiKey:      cfg.fb_api || 'no-key',
-        databaseURL: cfg.fb_url,
-      });
+      firebase.initializeApp(FB_CFG);
     }
     fbDB = firebase.database();
 
@@ -2470,8 +2476,8 @@ function init() {
   if (cfg.td)     document.getElementById('ctd').value    = cfg.td;
   if (cfg.tr)     document.getElementById('ctr').value    = cfg.tr;
   if (cfg.sup)    document.getElementById('csup').value   = cfg.sup;
-  if (cfg.fb_url) document.getElementById('cfb_url').value = cfg.fb_url;
-  if (cfg.fb_api) document.getElementById('cfb_api').value = cfg.fb_api;
+  document.getElementById('cfb_url').value = cfg.fb_url || FB_CFG.databaseURL;
+  document.getElementById('cfb_api').value = cfg.fb_api || FB_CFG.apiKey;
 
   // 5b. Inicializar Firebase si está configurado
   initFirebase();
