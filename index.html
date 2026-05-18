@@ -6,6 +6,8 @@
 <title>Onus Express — Intranet Operacional</title>
 <link href="https://fonts.googleapis.com/css2?family=REM:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 <style>
 /* ═══════════════════════════════════════════════════
    ONUS EXPRESS — Design System (Light)
@@ -1454,6 +1456,16 @@ body::before{
       <div class="page" id="page-config">
         <div class="cfgw">
           <div class="cfgs">
+            <h2>🔄 Sincronización en tiempo real</h2>
+            <div class="cfginfo">Conecta <strong>Firebase</strong> (gratuito) para que los cambios sean visibles al instante en todos los dispositivos del equipo.</div>
+            <div class="cfg2">
+              <div class="cff"><label>Database URL</label><input class="cfi" id="cfb_url" placeholder="https://tu-proyecto-rtdb.firebaseio.com"></div>
+              <div class="cff"><label>API Key</label><input class="cfi" id="cfb_api" placeholder="AIzaSy..."></div>
+            </div>
+            <button class="csb" onclick="saveFbCfg()">Guardar y activar sincronización</button>
+            <div id="fb-status" style="margin-top:10px;font-size:11px;font-weight:600"></div>
+          </div>
+          <div class="cfgs">
             <h2>EmailJS — Avisos automáticos</h2>
             <div class="cfginfo">Crea cuenta gratuita en <strong>emailjs.com</strong> (200 emails/mes). Conecta tu Gmail, crea las plantillas y pega los IDs aquí.</div>
             <div class="cfg2">
@@ -1583,12 +1595,16 @@ let filterUrgent= false;
 let filterMine  = false;
 let importBuffer= [];
 let prevStatus  = {};
+let fbDB        = null;
 
 // ============================================================
 // PERSISTENCIA — syncStorage() es el único punto de escritura
 // ============================================================
 function syncStorage() {
   localStorage.setItem(LS.TASKS, JSON.stringify(tasks));
+  if (fbDB) {
+    fbDB.ref('onus/tasks').set(tasks).catch(e => console.warn('Firebase write error:', e));
+  }
 }
 
 function loadTasks() {
@@ -1605,6 +1621,62 @@ function loadTasks() {
   // Sin datos guardados: cargar seed
   tasks = JSON.parse(JSON.stringify(SEED_TASKS));
   syncStorage();
+}
+
+// ============================================================
+// FIREBASE — base de datos compartida en tiempo real
+// ============================================================
+function initFirebase() {
+  const cfg = getCfg();
+  if (!cfg.fb_url) return false;
+  try {
+    if (!firebase.apps.length) {
+      firebase.initializeApp({
+        apiKey:      cfg.fb_api || 'no-key',
+        databaseURL: cfg.fb_url,
+      });
+    }
+    fbDB = firebase.database();
+
+    // Listener en tiempo real — actualiza el tablero para TODOS
+    fbDB.ref('onus/tasks').on('value', snap => {
+      const data = snap.val();
+      if (Array.isArray(data) && data.length > 0) {
+        tasks = data;
+        localStorage.setItem(LS.TASKS, JSON.stringify(tasks));
+        if (currentUser) { renderBoard(); updateUrgentBadge(); }
+      } else if (data === null && tasks.length > 0) {
+        // Firebase vacío: subir datos locales
+        fbDB.ref('onus/tasks').set(tasks);
+      }
+    });
+
+    // Actualizar indicador en config
+    const el = document.getElementById('fb-status');
+    if (el) el.innerHTML = '<span style="color:#059669">✓ Sincronización activa — cambios en tiempo real</span>';
+    return true;
+  } catch(e) {
+    console.error('Firebase init error:', e);
+    const el = document.getElementById('fb-status');
+    if (el) el.innerHTML = `<span style="color:#DC2626">✗ Error: ${e.message}</span>`;
+    return false;
+  }
+}
+
+function saveFbCfg() {
+  const url = document.getElementById('cfb_url').value.trim();
+  const api = document.getElementById('cfb_api').value.trim();
+  if (!url) { toast('Introduce la Database URL de Firebase', 'te'); return; }
+  const cfg = getCfg();
+  cfg.fb_url = url;
+  if (api) cfg.fb_api = api;
+  localStorage.setItem(LS.CFG, JSON.stringify(cfg));
+  if (fbDB) {
+    toast('✓ Config actualizada — recarga la página para aplicar', 'ts');
+  } else {
+    const ok = initFirebase();
+    toast(ok ? '✓ ¡Sincronización en tiempo real activada!' : '✗ Error al conectar — revisa la URL', ok ? 'ts' : 'te');
+  }
 }
 
 const getCfg   = () => { try { return JSON.parse(localStorage.getItem(LS.CFG)   || '{}');                              } catch(_){return {};} };
@@ -2391,13 +2463,18 @@ function init() {
     document.getElementById('bia').style.display = '';
   }
 
-  // 5. Restaurar config EmailJS
+  // 5. Restaurar config EmailJS + Firebase
   const cfg = getCfg();
-  if (cfg.pk)  document.getElementById('cpk').value  = cfg.pk;
-  if (cfg.svc) document.getElementById('csvc').value = cfg.svc;
-  if (cfg.td)  document.getElementById('ctd').value  = cfg.td;
-  if (cfg.tr)  document.getElementById('ctr').value  = cfg.tr;
-  if (cfg.sup) document.getElementById('csup').value = cfg.sup;
+  if (cfg.pk)     document.getElementById('cpk').value    = cfg.pk;
+  if (cfg.svc)    document.getElementById('csvc').value   = cfg.svc;
+  if (cfg.td)     document.getElementById('ctd').value    = cfg.td;
+  if (cfg.tr)     document.getElementById('ctr').value    = cfg.tr;
+  if (cfg.sup)    document.getElementById('csup').value   = cfg.sup;
+  if (cfg.fb_url) document.getElementById('cfb_url').value = cfg.fb_url;
+  if (cfg.fb_api) document.getElementById('cfb_api').value = cfg.fb_api;
+
+  // 5b. Inicializar Firebase si está configurado
+  initFirebase();
 
   // 6. Restaurar reglas de aviso
   const av = getAviso();
