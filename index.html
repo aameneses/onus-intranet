@@ -1769,7 +1769,7 @@ function renderCard(t) {
   const color  = deptColor(t.dept);
   const first  = (currentUser || '').split(' ')[0].toLowerCase();
   const ismine = currentUser && t.resp && t.resp.toLowerCase().includes(first);
-  return `<div class="card${ismine ? ' is-mine' : ''}" style="border-left-color:${color}" onclick="openModal(${JSON.stringify(String(t.id))})">
+  return `<div class="card${ismine ? ' is-mine' : ''}" style="border-left-color:${color}" onclick="openModal(${t.id})">
     ${t.bloqueos ? '<div class="blkdot"></div>' : ''}
     <div class="cdept" style="color:${color}">
       <span style="width:5px;height:5px;border-radius:50%;background:${color};display:inline-block"></span>
@@ -1803,7 +1803,7 @@ function renderDepts() {
       <div class="dbody op">
         <table class="dtable">
           <tr><th>Tarea</th><th>Responsable</th><th>Prioridad</th><th>Estado</th><th>Fecha</th></tr>
-          ${dt.map(t => `<tr onclick="openModal(${JSON.stringify(String(t.id))})">
+          ${dt.map(t => `<tr onclick="openModal(${t.id})">
             <td class="tm">${t.titulo}</td>
             <td>${t.resp.split(/[\/,]/)[0].trim()}</td>
             <td><span class="pr ${prioClass(t.prio)}">${t.prio}</span></td>
@@ -1884,7 +1884,7 @@ function openModal(id) {
     <div class="mf"><label>Notas / actualización</label>
       <textarea class="mta" id="m-notas" rows="3">${t.notas || ''}</textarea>
     </div>
-    <button class="msave" onclick="saveModal(${JSON.stringify(String(id))})">Guardar cambios</button>`;
+    <button class="msave" onclick="saveModal(${id})">Guardar cambios</button>`;
   document.getElementById('ov').classList.add('op');
 }
 
