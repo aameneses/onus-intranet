@@ -496,6 +496,16 @@ body::before{
   margin-top:8px;font-weight:600;
   letter-spacing:.02em;
 }
+.card-mtg{display:inline-flex;align-items:center;gap:4px;margin-top:7px;font-size:9.5px;font-weight:700;letter-spacing:.3px;padding:2px 8px 2px 6px;border-radius:5px;background:rgba(0,201,206,.1);color:var(--teal-deep);border:1px solid rgba(0,201,206,.25);width:fit-content}
+.card-new{display:inline-flex;align-items:center;gap:3px;margin-top:7px;font-size:9.5px;font-weight:700;letter-spacing:.3px;padding:2px 8px;border-radius:5px;background:rgba(5,150,105,.1);color:#065F46;border:1px solid rgba(5,150,105,.22);width:fit-content}
+.hist-section{margin-top:14px;border-top:1px solid var(--brd);padding-top:10px}
+.hist-toggle{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;color:var(--text3);cursor:pointer;padding:6px 18px;letter-spacing:.3px;text-transform:uppercase;user-select:none;transition:color .15s}
+.hist-toggle:hover{color:var(--text2)}
+.hist-body{display:none}
+.hist-body.op{display:block}
+.reundate-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.reundate-row label{font-size:11px;font-weight:700;color:var(--text2);white-space:nowrap;letter-spacing:.3px}
+.reundate-row input{padding:6px 10px;border:1px solid var(--brd2);border-radius:var(--r);font-size:12px;font-family:'REM',sans-serif;color:var(--navy);background:var(--bg-input)}
 .blkdot{
   position:absolute;top:10px;right:10px;
   width:8px;height:8px;border-radius:50%;
@@ -1429,6 +1439,10 @@ body::before{
             </div>
             <div class="aok" id="aok">✓ API Key configurada</div>
           </div>
+          <div class="reundate-row">
+            <label>📅 Fecha de la reunión:</label>
+            <input type="date" id="m-reundate">
+          </div>
           <div class="mf" style="margin-bottom:9px">
             <label class="fl">Resumen de la reunión</label>
             <textarea class="bta" id="rein" placeholder="Pega aquí el texto del resumen...&#10;&#10;Ejemplo:&#10;— Junior gestionará la licencia de Barcelona antes del 26 de mayo, urgente.&#10;— Diana portará las líneas a Orange esta semana.&#10;— Yamir ejecuta pagos de talleres el jueves."></textarea>
@@ -1864,10 +1878,20 @@ function renderBoard() {
 }
 
 function renderCard(t) {
-  const color  = deptColor(t.dept);
-  const first  = (currentUser || '').split(' ')[0].toLowerCase();
-  const ismine = currentUser && t.resp && t.resp.toLowerCase().includes(first);
-  return `<div class="card${ismine ? ' is-mine' : ''}" style="border-left-color:${color}" onclick="openModal(${t.id})">
+  const color   = deptColor(t.dept);
+  const first   = (currentUser || '').split(' ')[0].toLowerCase();
+  const ismine  = currentUser && t.resp && t.resp.toLowerCase().includes(first);
+  // Age / meeting badge
+  const now      = Date.now();
+  const created  = t.createdAt ? new Date(t.createdAt).getTime() : 0;
+  const daysSince= created ? Math.floor((now - created) / 86400000) : 999;
+  let ageBadge = '';
+  if (t.meetingDate) {
+    ageBadge = `<div class="card-mtg">📋 Reunión ${t.meetingDate}</div>`;
+  } else if (daysSince <= 7 && created) {
+    ageBadge = `<div class="card-new">🆕 Nueva · hace ${daysSince === 0 ? 'hoy' : daysSince + ' día' + (daysSince > 1 ? 's' : '')}</div>`;
+  }
+  return `<div class="card${ismine ? ' is-mine' : ''}" style="border-left-color:${color}" onclick="openModal('${t.id}')">
     ${t.bloqueos ? '<div class="blkdot"></div>' : ''}
     <div class="cdept" style="color:${color}">
       <span style="width:5px;height:5px;border-radius:50%;background:${color};display:inline-block"></span>
@@ -1879,36 +1903,71 @@ function renderCard(t) {
       <span class="pr ${prioClass(t.prio)}">${t.prio}</span>
     </div>
     ${t.fecha ? `<div class="cdate">📅 ${t.fecha}</div>` : ''}
+    ${ageBadge}
   </div>`;
 }
 
 // ============================================================
 // DEPARTAMENTOS
 // ============================================================
+function fmtCreated(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  const now = new Date();
+  const diff = Math.floor((now - d) / 86400000);
+  if (diff === 0) return 'Hoy';
+  if (diff === 1) return 'Ayer';
+  if (diff < 7)  return `Hace ${diff} días`;
+  return d.toLocaleDateString('es-ES', { day:'numeric', month:'short' });
+}
+
 function renderDepts() {
   document.getElementById('dpage').innerHTML = Object.entries(DEPTS).map(([dept, color]) => {
-    const dt  = tasks.filter(t => t.dept === dept);
+    const dt      = tasks.filter(t => t.dept === dept);
     if (!dt.length) return '';
-    const urg = dt.filter(t => t.prio === 'Urgente' && t.estado !== 'Completado').length;
+    const active  = dt.filter(t => t.estado !== 'Completado');
+    const done    = dt.filter(t => t.estado === 'Completado');
+    const urg     = active.filter(t => t.prio === 'Urgente').length;
+
+    const rowHtml = arr => arr.map(t => {
+      const mtgBadge = t.meetingDate ? `<span style="font-size:9px;background:rgba(0,201,206,.12);color:var(--teal-deep);border:1px solid rgba(0,201,206,.3);padding:1px 6px;border-radius:4px;font-weight:700;margin-left:6px">📋 ${t.meetingDate}</span>` : '';
+      return `<tr onclick="openModal('${t.id}')">
+        <td class="tm">${t.titulo}${mtgBadge}</td>
+        <td>${t.resp.split(/[\/,]/)[0].trim()}</td>
+        <td><span class="pr ${prioClass(t.prio)}">${t.prio}</span></td>
+        <td class="${t.estado === 'Completado' ? 'stC' : t.estado === 'En progreso' ? 'stE' : t.estado === 'Bloqueado' ? 'stB' : 'stP'}">${t.estado}</td>
+        <td>${t.fecha || '—'}</td>
+        <td style="color:var(--text3);font-size:11px">${fmtCreated(t.createdAt)}</td>
+      </tr>`;
+    }).join('');
+
+    const histSection = done.length ? `
+      <div class="hist-section">
+        <div class="hist-toggle" onclick="this.nextElementSibling.classList.toggle('op')">
+          ▸ Historial completadas (${done.length})
+        </div>
+        <div class="hist-body">
+          <table class="dtable">
+            <tr><th>Tarea</th><th>Responsable</th><th>Prioridad</th><th>Estado</th><th>Completada</th><th>Creada</th></tr>
+            ${rowHtml(done)}
+          </table>
+        </div>
+      </div>` : '';
+
     return `<div class="dblk">
       <div class="dhdr" style="border-left-color:${color}" onclick="this.nextElementSibling.classList.toggle('op')">
         <div class="ddot" style="background:${color}"></div>
         <span class="dname">${dept}</span>
         ${urg ? `<span class="dbdg durg">${urg} urgente${urg > 1 ? 's' : ''}</span>` : ''}
-        <span class="dbdg dcnt">${dt.length} tareas</span>
+        <span class="dbdg dcnt">${active.length} activas${done.length ? ' · ' + done.length + ' ✓' : ''}</span>
         <span style="color:var(--text3);font-size:11px;margin-left:4px">▾</span>
       </div>
       <div class="dbody op">
         <table class="dtable">
-          <tr><th>Tarea</th><th>Responsable</th><th>Prioridad</th><th>Estado</th><th>Fecha</th></tr>
-          ${dt.map(t => `<tr onclick="openModal(${t.id})">
-            <td class="tm">${t.titulo}</td>
-            <td>${t.resp.split(/[\/,]/)[0].trim()}</td>
-            <td><span class="pr ${prioClass(t.prio)}">${t.prio}</span></td>
-            <td class="${t.estado === 'Completado' ? 'stC' : t.estado === 'En progreso' ? 'stE' : t.estado === 'Bloqueado' ? 'stB' : 'stP'}">${t.estado}</td>
-            <td>${t.fecha || '—'}</td>
-          </tr>`).join('')}
+          <tr><th>Tarea</th><th>Responsable</th><th>Prioridad</th><th>Estado</th><th>Fecha límite</th><th>Creada</th></tr>
+          ${active.length ? rowHtml(active) : '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:18px">— Sin tareas activas —</td></tr>'}
         </table>
+        ${histSection}
       </div>
     </div>`;
   }).join('');
@@ -1992,9 +2051,14 @@ function openModal(id) {
     <div class="mf"><label>Notas / actualización</label>
       <textarea class="mta" id="m-notas" rows="3">${t.notas || ''}</textarea>
     </div>
+    <div style="font-size:10px;color:var(--text3);margin-top:6px;display:flex;gap:14px;flex-wrap:wrap">
+      ${t.createdAt ? `<span>📅 Creada: <strong>${new Date(t.createdAt).toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'})}</strong></span>` : ''}
+      ${t.meetingDate ? `<span>📋 Reunión: <strong>${t.meetingDate}</strong></span>` : ''}
+      ${t.completedAt ? `<span>✅ Completada: <strong>${new Date(t.completedAt).toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'})}</strong></span>` : ''}
+    </div>
     <div class="mbtns">
-      <button class="msave" onclick="saveModal(${id})">Guardar cambios</button>
-      <button class="mdel" onclick="deleteTask(${id})">🗑 Eliminar</button>
+      <button class="msave" onclick="saveModal('${id}')">Guardar cambios</button>
+      <button class="mdel" onclick="deleteTask('${id}')">🗑 Eliminar</button>
     </div>`;
   document.getElementById('ov').classList.add('op');
 }
@@ -2020,6 +2084,9 @@ async function saveModal(id) {
   t.prio   = document.getElementById('m-prio').value;
   t.fecha  = document.getElementById('m-fecha').value;
   t.notas  = document.getElementById('m-notas').value;
+  // Registrar cuándo se completó
+  if (t.estado === 'Completado' && !t.completedAt) t.completedAt = new Date().toISOString();
+  if (t.estado !== 'Completado') t.completedAt = null;
 
   syncStorage();
   closeModal();
@@ -2079,16 +2146,17 @@ function crearTarea() {
   const titulo = document.getElementById('nt-titulo').value.trim();
   if (!titulo) { toast('Escribe el título de la tarea', 'te'); return; }
   tasks.push({
-    id:       genId(),
-    dept:     document.getElementById('nt-dept').value,
+    id:        genId(),
+    dept:      document.getElementById('nt-dept').value,
     titulo,
-    resp:     document.getElementById('nt-resp').value || currentUser || 'Sin asignar',
-    prio:     document.getElementById('nt-prio').value,
-    estado:   'Pendiente',
-    fecha:    document.getElementById('nt-fecha').value,
-    accion:   document.getElementById('nt-accion').value,
-    bloqueos: document.getElementById('nt-bloqueos').value,
-    notas:    '',
+    resp:      document.getElementById('nt-resp').value || currentUser || 'Sin asignar',
+    prio:      document.getElementById('nt-prio').value,
+    estado:    'Pendiente',
+    fecha:     document.getElementById('nt-fecha').value,
+    accion:    document.getElementById('nt-accion').value,
+    bloqueos:  document.getElementById('nt-bloqueos').value,
+    notas:     '',
+    createdAt: new Date().toISOString(),
   });
   syncStorage();
   closeModal();
@@ -2175,18 +2243,23 @@ ${txt}`;
 
 function importar() {
   if (!importBuffer.length) return;
+  const rdEl = document.getElementById('m-reundate');
+  const meetingDate = rdEl ? rdEl.value : new Date().toLocaleDateString('es-ES', {day:'2-digit',month:'2-digit',year:'numeric'});
+  const now = new Date().toISOString();
   importBuffer.forEach(t => {
     tasks.push({
-      id:       genId(),               // ID único garantizado
-      dept:     t.dept     || 'Operaciones',
-      titulo:   t.titulo,
-      resp:     t.resp     || currentUser || 'Sin asignar',
-      prio:     t.prio     || 'Media',
-      estado:   'Pendiente',
-      fecha:    t.fecha    || '',
-      accion:   t.accion   || '',
-      bloqueos: t.bloqueos || '',
-      notas:    '',
+      id:          genId(),
+      dept:        t.dept     || 'Operaciones',
+      titulo:      t.titulo,
+      resp:        t.resp     || currentUser || 'Sin asignar',
+      prio:        t.prio     || 'Media',
+      estado:      'Pendiente',
+      fecha:       t.fecha    || '',
+      accion:      t.accion   || '',
+      bloqueos:    t.bloqueos || '',
+      notas:       '',
+      createdAt:   now,
+      meetingDate: meetingDate,
     });
   });
   const n = importBuffer.length;
@@ -2468,6 +2541,9 @@ function init() {
     document.getElementById('aok').style.display = 'block';
     document.getElementById('bia').style.display = '';
   }
+  // Pre-llenar fecha de reunión con hoy
+  const rdInput = document.getElementById('m-reundate');
+  if (rdInput) rdInput.value = new Date().toISOString().slice(0,10);
 
   // 5. Restaurar config EmailJS + Firebase
   const cfg = getCfg();
