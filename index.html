@@ -506,6 +506,13 @@ body::before{
 .reundate-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .reundate-row label{font-size:11px;font-weight:700;color:var(--text2);white-space:nowrap;letter-spacing:.3px}
 .reundate-row input{padding:6px 10px;border:1px solid var(--brd2);border-radius:var(--r);font-size:12px;font-family:'REM',sans-serif;color:var(--navy);background:var(--bg-input)}
+.dept-cfg-row{display:flex;align-items:center;gap:10px;padding:9px 14px;background:var(--bg-2);border:1px solid var(--brd);border-radius:var(--r);transition:all .15s}
+.dept-cfg-row:hover{border-color:var(--brd2)}
+.dept-cfg-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
+.dept-cfg-name{flex:1;font-size:13px;font-weight:600;color:var(--navy)}
+.dept-cfg-btn{padding:4px 10px;border-radius:5px;border:1px solid var(--brd2);background:#fff;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;color:var(--text2)}
+.dept-cfg-btn:hover{background:var(--bg-3);border-color:var(--teal);color:var(--navy)}
+.dept-cfg-btn.danger:hover{background:#FEE2E2;border-color:var(--red);color:var(--red)}
 .blkdot{
   position:absolute;top:10px;right:10px;
   width:8px;height:8px;border-radius:50%;
@@ -1470,6 +1477,18 @@ body::before{
       <div class="page" id="page-config">
         <div class="cfgw">
           <div class="cfgs">
+            <h2>👥 Equipo</h2>
+            <div class="cfginfo">Añade, edita o elimina miembros. Los cambios se reflejan al instante en el kanban y los filtros.</div>
+            <div class="profiles-grid" id="cfg-profiles-grid" style="margin:14px 0 10px"></div>
+            <button class="csb" onclick="abrirNuevoMiembro()">+ Añadir miembro</button>
+          </div>
+          <div class="cfgs">
+            <h2>🏢 Departamentos</h2>
+            <div class="cfginfo">Crea o renombra departamentos. El color se usa en tarjetas y filtros.</div>
+            <div id="depts-cfg-list" style="display:flex;flex-direction:column;gap:8px;margin:14px 0 10px"></div>
+            <button class="csb" onclick="abrirNuevoDept()">+ Nuevo departamento</button>
+          </div>
+          <div class="cfgs">
             <h2>🔄 Sincronización en tiempo real</h2>
             <div class="cfginfo">Conecta <strong>Firebase</strong> (gratuito) para que los cambios sean visibles al instante en todos los dispositivos del equipo.</div>
             <div class="cfg2">
@@ -1528,28 +1547,45 @@ body::before{
 
 // ── EQUIPO ──────────────────────────────────────────────────
 let TEAM = [
-  { name:'Junior De Freitas', email:'jdefreitas@onusexpress.com', dept:'Operaciones',    isSupervisor:true  },
-  { name:'Alejandro Meneses', email:'ameneses@onusexpress.com',   dept:'Operaciones'                       },
-  { name:'Marta Ibars',       email:'mibars@onusexpress.com',     dept:'Operaciones'                       },
-  { name:'Miguel Pereira',    email:'miguel@onusexpress.com',     dept:'Operaciones'                       },
-  { name:'Valentin Issler',   email:'vissler@onusexpress.com',    dept:'Comercial'                         },
-  { name:'Andres',            email:'info@onusexpress.com',       dept:'Comercial'                         },
-  { name:'Patricia Moreno',   email:'amoreno@onusexpress.com',    dept:'RRHH'                              },
-  { name:'Maria Moreno',      email:'mmoreno@onusexpress.com',    dept:'RRHH'                              },
-  { name:'Diana Da Maia',     email:'diana@onusexpress.com',      dept:'RRHH'                              },
-  { name:'Yamir Diaz',        email:'flota@onusexpress.com',      dept:'Flota'                             },
-  { name:'Sebastian',         email:'sebastian@onusexpress.com',  dept:'Marketing-Tech'                    },
+  // ── Directiva (supervisores) ────────────────────────────────
+  { name:'Miguel Pereira',          email:'miguel@onusexpress.com',       dept:'Directiva',          isSupervisor:true },
+  { name:'Diana Da Maia',           email:'diana@onusexpress.com',        dept:'Directiva',          isSupervisor:true },
+  // ── Operaciones ─────────────────────────────────────────────
+  { name:'Junior De Freitas',       email:'jdefreitas@onusexpress.com',   dept:'Operaciones',        isSupervisor:true },
+  { name:'Alejandro Meneses',       email:'ameneses@onusexpress.com',     dept:'Operaciones'                          },
+  { name:'Marta Ibars',             email:'mibars@onusexpress.com',       dept:'Operaciones'                          },
+  // ── Almacén Tarragona ───────────────────────────────────────
+  { name:'Andrea de Franca',        email:'opt@onusexpress.com',          dept:'Almacén Tarragona'                    },
+  { name:'Elio',                    email:'opt@onusexpress.com',          dept:'Almacén Tarragona'                    },
+  { name:'Miguel Ángel',            email:'opt@onusexpress.com',          dept:'Almacén Tarragona'                    },
+  { name:'Dennis de Freitas',       email:'opt@onusexpress.com',          dept:'Almacén Tarragona'                    },
+  // ── Comercial ───────────────────────────────────────────────
+  { name:'Valentin Issler',         email:'vissler@onusexpress.com',      dept:'Comercial'                            },
+  { name:'Santiago Goubat',         email:'sgoubat@onusexpress.com',      dept:'Comercial'                            },
+  { name:'Andres',                  email:'info@onusexpress.com',         dept:'Comercial'                            },
+  // ── RRHH ────────────────────────────────────────────────────
+  { name:'Patricia Moreno',         email:'amoreno@onusexpress.com',      dept:'RRHH'                                 },
+  { name:'Maria Moreno',            email:'mmoreno@onusexpress.com',      dept:'RRHH'                                 },
+  // ── Recruiting ──────────────────────────────────────────────
+  { name:'María Fernanda Urquiola', email:'mariaurquiola@onusexpress.com',dept:'Recruiting'                           },
+  // ── Flota ───────────────────────────────────────────────────
+  { name:'Yamir Diaz',              email:'flota@onusexpress.com',        dept:'Flota'                                },
+  // ── Marketing / Tech ────────────────────────────────────────
+  { name:'Sebastian',               email:'sebastian@onusexpress.com',    dept:'Marketing-Tech'                       },
 ];
 
 // ── COLORES DEPARTAMENTOS ────────────────────────────────────
-const DEPTS = {
+let DEPTS = {
+  'Directiva':          '#1e3a5f',
   'Operaciones':        '#3b82f6',
+  'Almacén Tarragona':  '#f97316',
   'Comercial':          '#00C9CE',
   'Administración':     '#f59e0b',
   'RRHH':               '#ef4444',
+  'Recruiting':         '#ec4899',
   'Flota':              '#8b5cf6',
   'Marketing-Tech':     '#06b6d4',
-  'Operaciones Locales':'#f97316',
+  'Operaciones Locales':'#64748b',
   'Atención Cliente':   '#10b981',
 };
 
@@ -1598,6 +1634,8 @@ const LS = {
   MAILS : 'oe_mails',
   AVISO : 'oe_aviso',
   APIKEY: 'oe_apikey',
+  TEAM  : 'oe_team_v3',
+  DEPTS : 'oe_depts_v3',
 };
 
 // ── STATE ─────────────────────────────────────────────────────
@@ -1805,6 +1843,7 @@ function gp(name, el) {
   if (name === 'resumen')       renderResumen();
   if (name === 'kanban')        renderBoard();
   if (name === 'perfiles')      renderProfiles();
+  if (name === 'config')        { renderProfiles(); renderDeptsCfg(); }
 }
 
 // ============================================================
@@ -2387,11 +2426,9 @@ function saveMails() {
 // ============================================================
 
 function renderProfiles() {
-  const grid = document.getElementById('profiles-grid');
-  if (!grid) return;
-  grid.innerHTML = TEAM.map((m, idx) => `
+  const cardHtml = TEAM.map((m, idx) => `
     <div class="profile-card">
-      <div class="profile-av">${initials(m.name)}</div>
+      <div class="profile-av" style="background:linear-gradient(135deg,${deptColor(m.dept)} 0%,${deptColor(m.dept)}cc 100%)">${initials(m.name)}</div>
       <div class="profile-info">
         <div class="profile-name">${m.name}</div>
         <div class="profile-dept">${m.dept}</div>
@@ -2403,6 +2440,116 @@ function renderProfiles() {
         ${!m.isSupervisor ? `<button class="profile-btn danger" onclick="eliminarMiembro(${idx})" title="Eliminar">🗑</button>` : ''}
       </div>
     </div>`).join('');
+  const g1 = document.getElementById('profiles-grid');
+  const g2 = document.getElementById('cfg-profiles-grid');
+  if (g1) g1.innerHTML = cardHtml;
+  if (g2) g2.innerHTML = cardHtml;
+}
+
+// ── GESTIÓN DE DEPARTAMENTOS ─────────────────────────────────
+function saveDepts() {
+  localStorage.setItem(LS.DEPTS, JSON.stringify(DEPTS));
+}
+
+function loadDepts() {
+  try {
+    const raw = localStorage.getItem(LS.DEPTS);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
+        // Merge: keep defaults for new depts, override colours for existing
+        Object.assign(DEPTS, parsed);
+      }
+    }
+  } catch(_) {}
+}
+
+function renderDeptsCfg() {
+  const el = document.getElementById('depts-cfg-list');
+  if (!el) return;
+  el.innerHTML = Object.entries(DEPTS).map(([name, color]) => {
+    const taskCount = tasks.filter(t => t.dept === name).length;
+    return `<div class="dept-cfg-row">
+      <div class="dept-cfg-dot" style="background:${color}"></div>
+      <span class="dept-cfg-name">${name}</span>
+      <span style="font-size:10px;color:var(--text3);margin-right:4px">${taskCount} tarea${taskCount !== 1 ? 's' : ''}</span>
+      <button class="dept-cfg-btn" onclick="editarDept('${name.replace(/'/g,"\\'")}')">✏️ Editar</button>
+      ${taskCount === 0 ? `<button class="dept-cfg-btn danger" onclick="eliminarDept('${name.replace(/'/g,"\\'")}')">🗑</button>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function abrirNuevoDept() {
+  document.getElementById('mttl').textContent = 'Nuevo departamento';
+  document.getElementById('mbody').innerHTML = `
+    <div class="mf"><label>Nombre del departamento</label>
+      <input class="mi" id="nd-name" placeholder="Ej: Logística">
+    </div>
+    <div class="mf"><label>Color</label>
+      <input type="color" id="nd-color" value="#3b82f6" style="width:60px;height:36px;border:none;cursor:pointer;border-radius:var(--r)">
+    </div>
+    <button class="msave" onclick="guardarNuevoDept()">Crear departamento</button>`;
+  document.getElementById('ov').classList.add('op');
+}
+
+function guardarNuevoDept() {
+  const name  = document.getElementById('nd-name').value.trim();
+  const color = document.getElementById('nd-color').value;
+  if (!name) { toast('Escribe el nombre del departamento', 'te'); return; }
+  if (DEPTS[name]) { toast('Ya existe ese departamento', 'te'); return; }
+  DEPTS[name] = color;
+  saveDepts();
+  closeModal();
+  renderDeptsCfg();
+  toast(`✓ Departamento "${name}" creado`, 'ts');
+}
+
+function editarDept(name) {
+  const color = DEPTS[name] || '#3b82f6';
+  document.getElementById('mttl').textContent = 'Editar departamento';
+  document.getElementById('mbody').innerHTML = `
+    <div class="mf"><label>Nombre</label>
+      <input class="mi" id="ed-name" value="${name}">
+    </div>
+    <div class="mf"><label>Color</label>
+      <input type="color" id="ed-color" value="${color}" style="width:60px;height:36px;border:none;cursor:pointer;border-radius:var(--r)">
+    </div>
+    <button class="msave" onclick="guardarEditDept('${name.replace(/'/g,"\\'")}')">Guardar</button>`;
+  document.getElementById('ov').classList.add('op');
+}
+
+function guardarEditDept(oldName) {
+  const newName = document.getElementById('ed-name').value.trim();
+  const color   = document.getElementById('ed-color').value;
+  if (!newName) { toast('El nombre no puede estar vacío', 'te'); return; }
+  if (newName !== oldName && DEPTS[newName]) { toast('Ya existe ese nombre', 'te'); return; }
+  // Rename in DEPTS
+  delete DEPTS[oldName];
+  DEPTS[newName] = color;
+  // Update tasks and team members using oldName
+  tasks.forEach(t => { if (t.dept === oldName) t.dept = newName; });
+  TEAM.forEach(m  => { if (m.dept === oldName) m.dept = newName; });
+  syncStorage();
+  saveTeam();
+  saveDepts();
+  closeModal();
+  renderDeptsCfg();
+  renderProfiles();
+  renderBoard();
+  toast(`✓ Departamento actualizado`, 'ts');
+}
+
+function eliminarDept(name) {
+  const count = tasks.filter(t => t.dept === name).length;
+  if (count > 0) { toast('No se puede eliminar: tiene tareas asignadas', 'te'); return; }
+  if (!confirm(`¿Eliminar el departamento "${name}"?`)) return;
+  delete DEPTS[name];
+  TEAM.forEach(m => { if (m.dept === name) m.dept = 'Operaciones'; });
+  saveDepts();
+  saveTeam();
+  renderDeptsCfg();
+  renderProfiles();
+  toast(`Departamento "${name}" eliminado`, 'tw2');
 }
 
 function abrirNuevoMiembro() {
@@ -2504,12 +2651,12 @@ function eliminarMiembro(idx) {
 }
 
 function saveTeam() {
-  localStorage.setItem('oe_team_v3', JSON.stringify(TEAM));
+  localStorage.setItem(LS.TEAM, JSON.stringify(TEAM));
 }
 
 function loadTeam() {
   try {
-    const raw = localStorage.getItem('oe_team_v3');
+    const raw = localStorage.getItem(LS.TEAM);
     if (raw) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed) && parsed.length > 0) {
@@ -2568,8 +2715,10 @@ function init() {
   renderEmap();
   initEmailJS();
 
-  // 8. Cargar equipo desde localStorage (si hay cambios guardados)
+  // 8. Cargar equipo y departamentos desde localStorage
+  loadDepts();
   loadTeam();
+  renderDeptsCfg();
 
   // 9. checkAuth() — muestra login modal o carga pizarra del usuario
   checkAuth();
