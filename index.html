@@ -1574,6 +1574,9 @@ let TEAM = [
   { name:'Sebastian',               email:'sebastian@onusexpress.com',    dept:'Marketing-Tech'                       },
 ];
 
+// Referencia inmutable a los defaults del código (para merge)
+const DEFAULT_TEAM = TEAM.map(m => ({...m}));
+
 // ── COLORES DEPARTAMENTOS ────────────────────────────────────
 let DEPTS = {
   'Directiva':          '#1e3a5f',
@@ -1696,7 +1699,7 @@ function initFirebase() {
     }
     fbDB = firebase.database();
 
-    // Listener en tiempo real — actualiza el tablero para TODOS
+    // Listener tareas — actualiza el tablero para TODOS
     fbDB.ref('onus/tasks').on('value', snap => {
       const data = snap.val();
       if (Array.isArray(data) && data.length > 0) {
@@ -1704,8 +1707,54 @@ function initFirebase() {
         localStorage.setItem(LS.TASKS, JSON.stringify(tasks));
         if (currentUser) { renderBoard(); updateUrgentBadge(); }
       } else if (data === null && tasks.length > 0) {
-        // Firebase vacío: subir datos locales
         fbDB.ref('onus/tasks').set(tasks);
+      }
+    });
+
+    // Listener equipo — sincroniza miembros en todos los dispositivos
+    fbDB.ref('onus/team').on('value', snap => {
+      const data = snap.val();
+      if (Array.isArray(data) && data.length > 0) {
+        // Merge: si el código tiene nuevos miembros que no están en Firebase, añadirlos
+        const storedNames = new Set(data.map(m => m.name));
+        let needsUpdate = false;
+        const merged = [...data];
+        DEFAULT_TEAM.forEach(dm => {
+          if (!storedNames.has(dm.name)) {
+            merged.push({...dm}); // Nuevo miembro hardcoded → añadir
+            needsUpdate = true;
+          } else {
+            // Actualizar dept y supervisor del miembro existente si cambió en el código
+            const existing = merged.find(m => m.name === dm.name);
+            if (existing) {
+              if (existing.dept !== dm.dept) { existing.dept = dm.dept; needsUpdate = true; }
+              if (!!existing.isSupervisor !== !!dm.isSupervisor) { existing.isSupervisor = dm.isSupervisor; needsUpdate = true; }
+            }
+          }
+        });
+        TEAM.length = 0;
+        merged.forEach(m => TEAM.push(m));
+        localStorage.setItem(LS.TEAM, JSON.stringify(TEAM));
+        if (needsUpdate) fbDB.ref('onus/team').set(TEAM); // Propagar a todos
+        buildLoginSelect();
+        renderProfiles();
+      } else if (data === null) {
+        fbDB.ref('onus/team').set(TEAM); // Firebase vacío: subir equipo actual
+      }
+    });
+
+    // Listener departamentos — sincroniza colores y nombres
+    fbDB.ref('onus/depts').on('value', snap => {
+      const data = snap.val();
+      if (data && typeof data === 'object' && Object.keys(data).length > 0) {
+        // Merge: conservar nuevos depts hardcoded que no estén en Firebase
+        Object.keys(DEPTS).forEach(k => { if (!data[k]) data[k] = DEPTS[k]; });
+        Object.keys(DEPTS).forEach(k => delete DEPTS[k]);
+        Object.assign(DEPTS, data);
+        localStorage.setItem(LS.DEPTS, JSON.stringify(DEPTS));
+        renderDeptsCfg();
+      } else if (data === null) {
+        fbDB.ref('onus/depts').set(DEPTS);
       }
     });
 
@@ -2449,6 +2498,7 @@ function renderProfiles() {
 // ── GESTIÓN DE DEPARTAMENTOS ─────────────────────────────────
 function saveDepts() {
   localStorage.setItem(LS.DEPTS, JSON.stringify(DEPTS));
+  if (fbDB) fbDB.ref('onus/depts').set(DEPTS).catch(e => console.warn('Firebase depts write:', e));
 }
 
 function loadDepts() {
@@ -2652,6 +2702,7 @@ function eliminarMiembro(idx) {
 
 function saveTeam() {
   localStorage.setItem(LS.TEAM, JSON.stringify(TEAM));
+  if (fbDB) fbDB.ref('onus/team').set(TEAM).catch(e => console.warn('Firebase team write:', e));
 }
 
 function loadTeam() {
@@ -2715,7 +2766,7 @@ function init() {
   renderEmap();
   initEmailJS();
 
-  // 8. Cargar equipo y departamentos desde localStorage
+  // 8. Cargar equipo y departamentos desde localStorage (Firebase los sobreescribirá si hay datos más recientes)
   loadDepts();
   loadTeam();
   renderDeptsCfg();
