@@ -1352,6 +1352,58 @@ body::before{
   display:inline-block;margin-top:3px;
 }
 
+/* ── TABLÓN ── */
+.tablon-wrap{max-width:720px;margin:0 auto;padding:28px 24px}
+.tablon-header{margin-bottom:24px}
+.tablon-title{font-size:22px;font-weight:700;color:var(--navy)}
+.tablon-sub{font-size:13px;color:var(--text3);margin-top:4px}
+.tablon-compose{background:var(--bg-card);border:1px solid var(--brd2);border-radius:var(--r2);padding:16px;margin-bottom:24px;box-shadow:var(--sh-sm);position:relative}
+.tablon-input{width:100%;border:1px solid var(--brd2);border-radius:var(--r);padding:12px 14px;font-family:'REM',sans-serif;font-size:14px;color:var(--text);background:var(--bg-input);resize:none;outline:none;transition:border-color .2s}
+.tablon-input:focus{border-color:var(--teal);box-shadow:var(--glow)}
+.tablon-actions{display:flex;align-items:center;justify-content:flex-end;margin-top:12px;gap:10px}
+.tablon-btn{background:var(--navy);color:#fff;border:none;border-radius:var(--r);padding:9px 20px;font-family:'REM',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:background .2s}
+.tablon-btn:hover{background:var(--navy-100)}
+.tablon-mentions{position:absolute;left:16px;right:16px;background:#fff;border:1px solid var(--brd2);border-radius:var(--r);box-shadow:var(--sh-md);z-index:100;overflow:hidden}
+.mention-item{padding:10px 14px;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:8px}
+.mention-item:hover{background:var(--td)}
+.mention-dept{font-size:11px;color:var(--text3)}
+.mention-tag{background:var(--teal-tint);color:var(--teal-deep);padding:1px 6px;border-radius:4px;font-weight:600}
+.nota-card{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r2);padding:18px 20px;margin-bottom:14px;box-shadow:var(--sh-sm);transition:box-shadow .2s}
+.nota-card:hover{box-shadow:var(--sh-md)}
+.nota-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.nota-av{width:38px;height:38px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.nota-meta{flex:1}
+.nota-autor{font-weight:600;font-size:14px;color:var(--navy)}
+.nota-dept{font-size:11px;color:var(--text3);margin-top:2px}
+.nota-body{font-size:14px;color:var(--text);line-height:1.6;white-space:pre-wrap}
+.nota-tags{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
+.nota-tag-chip{background:var(--teal-tint);color:var(--teal-deep);padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600}
+.nota-del{margin-left:auto;background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;line-height:1;padding:2px 6px;border-radius:var(--r);transition:color .15s,background .15s}
+.nota-del:hover{color:var(--red);background:var(--red-bg)}
+.tablon-empty{text-align:center;color:var(--text3);padding:48px 24px;font-size:14px}
+.tablon-tags-preview{flex:1}
+/* Destinatarios */
+.tablon-dest-row{display:flex;align-items:center;gap:10px;margin-top:10px}
+.tablon-dest-label{font-size:12px;color:var(--text3);white-space:nowrap;font-weight:600}
+.tablon-dest-select{flex:1;border:1px solid var(--brd2);border-radius:var(--r);padding:7px 10px;font-family:'REM',sans-serif;font-size:13px;color:var(--text);background:var(--bg-input);outline:none;cursor:pointer}
+.tablon-dest-members{background:var(--bg-2);border:1px solid var(--brd);border-radius:var(--r);padding:10px 14px;margin-top:8px;display:flex;flex-direction:column;gap:4px}
+.dest-hint{font-size:11px;color:var(--text3);font-weight:600;margin-bottom:4px;text-transform:uppercase;letter-spacing:.6px}
+.dest-cb-label{display:flex;align-items:center;gap:8px;padding:5px 4px;cursor:pointer;font-size:13px;border-radius:var(--r);transition:background .15s}
+.dest-cb-label:hover{background:var(--td)}
+.dest-cb-name{flex:1;font-weight:500}
+.dest-cb-dept{font-size:11px;color:var(--text3)}
+/* Chips de destinatario en la tarjeta */
+.nota-footer{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;align-items:center}
+.nota-dest-chips{display:flex;flex-wrap:wrap;gap:5px}
+.dest-chip{font-size:11px;font-weight:600;padding:3px 9px;border-radius:99px}
+.dest-chip.all{background:#EEF2F8;color:var(--navy)}
+.dest-chip.specific{background:var(--amber-bg);color:var(--amber-ink)}
+/* PIN login */
+.login-pin{text-align:center;letter-spacing:10px;font-size:24px;max-width:160px;margin:0 auto;display:block;padding:10px;border:1.5px solid var(--brd2);border-radius:var(--r);font-family:'REM',sans-serif;outline:none;background:var(--bg-input);transition:border-color .2s;width:100%}
+.login-pin:focus{border-color:var(--teal);box-shadow:var(--glow)}
+.login-pin-label{font-size:12px;color:var(--text3);margin:14px 0 6px;text-align:center;display:block}
+.login-pin-area{text-align:center}
+
 </style>
 </head>
 <body>
@@ -1368,10 +1420,18 @@ body::before{
     <div class="login-title">Intranet Operacional</div>
     <div class="login-desc">Identifícate para acceder a tu pizarra de tareas y seguimiento semanal.</div>
     <label class="login-label">¿Quién eres?</label>
-    <select class="login-select" id="loginSelect">
+    <select class="login-select" id="loginSelect" onchange="onLoginSelectChange()">
       <option value="">— Selecciona tu nombre —</option>
     </select>
-    <button class="login-btn" onclick="doLogin()">Entrar</button>
+    <div id="loginPinArea" style="display:none" class="login-pin-area">
+      <span class="login-pin-label" id="loginPinLabel">Introduce tu PIN</span>
+      <input class="login-pin" type="password" id="loginPin" maxlength="4" inputmode="numeric" pattern="\d{4}" placeholder="••••" autocomplete="off">
+      <div id="loginPin2Wrap" style="display:none">
+        <span class="login-pin-label" id="loginPin2Label">Confirma tu PIN</span>
+        <input class="login-pin" type="password" id="loginPin2" maxlength="4" inputmode="numeric" pattern="\d{4}" placeholder="••••" autocomplete="off">
+      </div>
+    </div>
+    <button class="login-btn" onclick="doLogin()" style="margin-top:18px">Entrar</button>
     <div class="login-err" id="loginErr">Selecciona tu nombre para continuar.</div>
   </div>
 </div>
@@ -1398,6 +1458,7 @@ body::before{
       <div class="slbl">Operaciones</div>
       <div class="sni" onclick="gp('carga',this)"><span class="ni">⊕</span>Cargar reunión<span class="nbadge" id="bia" style="display:none">IA</span></div>
       <div class="sni" onclick="gp('perfiles',this)"><span class="ni">◎</span>Equipo</div>
+      <div class="sni" onclick="gp('tablon',this)"><span class="ni">📋</span>Tablón<span class="nbadge" id="bnot" style="display:none"></span></div>
     </nav>
     <div class="sb-bot">
       <button class="sb-cfg" onclick="gp('config',null)"><span>⚙</span>Configuración</button>
@@ -1472,6 +1533,31 @@ body::before{
             <button class="profile-add-btn" onclick="abrirNuevoMiembro()">+ Añadir miembro</button>
           </div>
           <div class="profiles-grid" id="profiles-grid"></div>
+        </div>
+      </div>
+      <div class="page" id="page-tablon">
+        <div class="tablon-wrap">
+          <div class="tablon-header">
+            <div class="tablon-title">📋 Tablón de anuncios</div>
+            <div class="tablon-sub">Avisos visibles para todo el equipo</div>
+          </div>
+          <div class="tablon-compose" id="tablon-compose">
+            <textarea class="tablon-input" id="tablon-text" placeholder="Escribe un aviso... usa @nombre para etiquetar a alguien" rows="3" oninput="onTablonInput(this)"></textarea>
+            <div class="tablon-mentions" id="tablon-mentions" style="display:none"></div>
+            <div class="tablon-dest-row">
+              <label class="tablon-dest-label">¿A quién va dirigido?</label>
+              <select class="tablon-dest-select" id="tablon-dest-type" onchange="onDestTypeChange()">
+                <option value="all">📢 Todo el equipo</option>
+                <option value="specific">👤 Personas específicas</option>
+              </select>
+            </div>
+            <div id="tablon-dest-members" style="display:none" class="tablon-dest-members"></div>
+            <div class="tablon-actions">
+              <div class="tablon-tags-preview" id="tablon-tags-preview"></div>
+              <button class="tablon-btn" onclick="publicarNota()">Publicar aviso</button>
+            </div>
+          </div>
+          <div class="tablon-feed" id="tablon-feed"></div>
         </div>
       </div>
       <div class="page" id="page-config">
@@ -1552,7 +1638,7 @@ let TEAM = [
   { name:'Diana Da Maia',           email:'diana@onusexpress.com',        dept:'Directiva',          isSupervisor:true },
   // ── Operaciones ─────────────────────────────────────────────
   { name:'Junior De Freitas',       email:'jdefreitas@onusexpress.com',   dept:'Operaciones',        isSupervisor:true },
-  { name:'Alejandro Meneses',       email:'ameneses@onusexpress.com',     dept:'Operaciones'                          },
+  { name:'Alejandro Meneses',       email:'menesesariasalejandro@gmail.com', dept:'Operaciones',        isSupervisor:true },
   { name:'Marta Ibars',             email:'mibars@onusexpress.com',       dept:'Operaciones'                          },
   // ── Almacén Tarragona ───────────────────────────────────────
   { name:'Andrea de Franca',        email:'opt@onusexpress.com',          dept:'Almacén Tarragona'                    },
@@ -1639,6 +1725,8 @@ const LS = {
   APIKEY: 'oe_apikey',
   TEAM  : 'oe_team_v3',
   DEPTS : 'oe_depts_v3',
+  PINS  : 'oe_pins_v1',
+  NOTAS : 'oe_notas_v1',
 };
 
 // ── STATE ─────────────────────────────────────────────────────
@@ -1651,6 +1739,8 @@ let filterMine  = false;
 let importBuffer= [];
 let prevStatus  = {};
 let fbDB        = null;
+let PINS        = {};   // { "Nombre Completo": "1234" }
+let NOTAS       = [];   // [{ id, autor, dept, texto, ts, tags }]
 
 // ============================================================
 // PERSISTENCIA — syncStorage() es el único punto de escritura
@@ -1728,8 +1818,14 @@ function initFirebase() {
             const existing = merged.find(m => m.name === dm.name);
             if (existing) {
               if (existing.dept !== dm.dept) { existing.dept = dm.dept; needsUpdate = true; }
-              if (!!existing.isSupervisor !== !!dm.isSupervisor) { existing.isSupervisor = dm.isSupervisor; needsUpdate = true; }
+              // NO sobreescribir isSupervisor desde DEFAULT_TEAM — los roles se gestionan manualmente
             }
+          }
+        });
+        // ── Protección permanente: Alejandro Meneses SIEMPRE es supervisor ──
+        merged.forEach(m => {
+          if (m.email === 'menesesariasalejandro@gmail.com' || m.name === 'Alejandro Meneses') {
+            if (!m.isSupervisor) { m.isSupervisor = true; needsUpdate = true; }
           }
         });
         TEAM.length = 0;
@@ -1755,6 +1851,30 @@ function initFirebase() {
         renderDeptsCfg();
       } else if (data === null) {
         fbDB.ref('onus/depts').set(DEPTS);
+      }
+    });
+
+    // Listener PINs — sincroniza PINs en todos los dispositivos
+    fbDB.ref('onus/pins').on('value', snap => {
+      const data = snap.val();
+      if (data && typeof data === 'object') {
+        // Merge: los PINs locales tienen prioridad (no sobrescribir)
+        Object.assign(PINS, data);
+        PINS = Object.assign({}, data, PINS);
+        localStorage.setItem(LS.PINS, JSON.stringify(PINS));
+      }
+    });
+
+    // Listener notas — sincroniza tablón en todos los dispositivos
+    fbDB.ref('onus/notas').on('value', snap => {
+      const data = snap.val();
+      if (Array.isArray(data)) {
+        NOTAS = data;
+        localStorage.setItem(LS.NOTAS, JSON.stringify(NOTAS));
+        const activePage = document.querySelector('.page.on');
+        if (activePage && activePage.id === 'page-tablon') renderTablon();
+      } else if (data === null && NOTAS.length > 0) {
+        fbDB.ref('onus/notas').set(NOTAS);
       }
     });
 
@@ -1821,7 +1941,35 @@ function doLogin() {
   const sel    = document.getElementById('loginSelect');
   const err    = document.getElementById('loginErr');
   const member = TEAM.find(t => t.name === sel.value);
-  if (!member) { err.style.display = 'block'; return; }
+  if (!member) { err.textContent = 'Selecciona tu nombre para continuar.'; err.style.display = 'block'; return; }
+
+  const pinVal = document.getElementById('loginPin').value.trim();
+  if (!/^\d{4}$/.test(pinVal)) {
+    err.textContent = 'El PIN debe tener exactamente 4 dígitos.';
+    err.style.display = 'block';
+    return;
+  }
+
+  if (!PINS[member.name]) {
+    // Primera vez: crear PIN
+    const pin2Val = document.getElementById('loginPin2').value.trim();
+    if (pinVal !== pin2Val) {
+      err.textContent = 'Los PINs no coinciden. Inténtalo de nuevo.';
+      err.style.display = 'block';
+      return;
+    }
+    PINS[member.name] = pinVal;
+    savePins();
+    toast('✓ PIN creado correctamente', 'ts');
+  } else {
+    // Validar PIN existente
+    if (PINS[member.name] !== pinVal) {
+      err.textContent = 'PIN incorrecto. Inténtalo de nuevo.';
+      err.style.display = 'block';
+      return;
+    }
+  }
+
   err.style.display = 'none';
   localStorage.setItem(LS.USER, member.name);
   applySession(member);
@@ -1829,6 +1977,10 @@ function doLogin() {
 
 function applySession(member) {
   currentUser = member.name;
+  // Protección permanente: Alejandro Meneses siempre tiene rol supervisor
+  if (member.email === 'menesesariasalejandro@gmail.com' || member.name === 'Alejandro Meneses') {
+    member.isSupervisor = true;
+  }
   isSup       = !!member.isSupervisor;
   filterMine  = !isSup; // supervisor ve todo; el resto ve solo las suyas por defecto
 
@@ -1849,6 +2001,10 @@ function doLogout() {
   document.getElementById('sessAv').textContent   = '--';
   document.getElementById('sessName').textContent = '—';
   document.getElementById('loginSelect').value    = '';
+  document.getElementById('loginPin').value       = '';
+  document.getElementById('loginPin2').value      = '';
+  document.getElementById('loginPinArea').style.display = 'none';
+  document.getElementById('loginErr').style.display    = 'none';
   showLogin();
 }
 
@@ -1880,7 +2036,7 @@ function copyAccess() {
 // ============================================================
 // NAVEGACIÓN
 // ============================================================
-const PAGE_TITLES = { kanban:'Tablero Kanban', departamentos:'Por Departamento', resumen:'Resumen Ejecutivo', carga:'Cargar Reunión', config:'Configuración' };
+const PAGE_TITLES = { kanban:'Tablero Kanban', departamentos:'Por Departamento', resumen:'Resumen Ejecutivo', carga:'Cargar Reunión', config:'Configuración', perfiles:'Equipo', tablon:'Tablón de Anuncios' };
 
 function gp(name, el) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
@@ -1893,6 +2049,7 @@ function gp(name, el) {
   if (name === 'kanban')        renderBoard();
   if (name === 'perfiles')      renderProfiles();
   if (name === 'config')        { renderProfiles(); renderDeptsCfg(); }
+  if (name === 'tablon')        renderTablon();
 }
 
 // ============================================================
@@ -2719,6 +2876,203 @@ function loadTeam() {
 }
 
 // ============================================================
+// PINS — autenticación de acceso
+// ============================================================
+function loadPins() {
+  try {
+    const raw = localStorage.getItem(LS.PINS);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object') {
+        Object.assign(PINS, parsed);
+      }
+    }
+  } catch(_) {}
+}
+
+function savePins() {
+  localStorage.setItem(LS.PINS, JSON.stringify(PINS));
+  if (fbDB) fbDB.ref('onus/pins').set(PINS).catch(e => console.warn('Firebase pins write:', e));
+}
+
+function onLoginSelectChange() {
+  const sel     = document.getElementById('loginSelect');
+  const pinArea = document.getElementById('loginPinArea');
+  const errEl   = document.getElementById('loginErr');
+  errEl.style.display = 'none';
+  if (!sel.value) { pinArea.style.display = 'none'; return; }
+  pinArea.style.display = 'block';
+  document.getElementById('loginPin').value  = '';
+  document.getElementById('loginPin2').value = '';
+  const isNew = !PINS[sel.value];
+  document.getElementById('loginPinLabel').textContent    = isNew ? 'Crea tu PIN de acceso (4 dígitos)' : 'Introduce tu PIN';
+  document.getElementById('loginPin2Wrap').style.display  = isNew ? 'block' : 'none';
+  document.getElementById('loginPin2Label').textContent   = isNew ? 'Confirma tu PIN' : '';
+  // Enfocar el campo PIN automáticamente
+  setTimeout(() => document.getElementById('loginPin').focus(), 50);
+}
+
+// ============================================================
+// NOTAS / TABLÓN DE ANUNCIOS
+// ============================================================
+function loadNotas() {
+  try {
+    const raw = localStorage.getItem(LS.NOTAS);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        NOTAS = parsed;
+      }
+    }
+  } catch(_) {}
+}
+
+function saveNotas() {
+  localStorage.setItem(LS.NOTAS, JSON.stringify(NOTAS));
+  if (fbDB) fbDB.ref('onus/notas').set(NOTAS).catch(e => console.warn('Firebase notas write:', e));
+}
+
+function onTablonInput(ta) {
+  const text   = ta.value;
+  const cursor = ta.selectionStart;
+  const before = text.slice(0, cursor);
+  const match  = before.match(/@(\w*)$/);
+  const menu   = document.getElementById('tablon-mentions');
+  if (match) {
+    const q       = match[1].toLowerCase();
+    const matches = TEAM.filter(m => m.name.toLowerCase().includes(q)).slice(0, 5);
+    if (matches.length) {
+      menu.style.display = 'block';
+      menu.innerHTML = matches.map(m =>
+        `<div class="mention-item" onclick="insertMention('${m.name.replace(/'/g,"\\'")}')">
+          <span>${m.name}</span>
+          <span class="mention-dept">${m.dept}</span>
+        </div>`
+      ).join('');
+      return;
+    }
+  }
+  menu.style.display = 'none';
+}
+
+function insertMention(name) {
+  const ta     = document.getElementById('tablon-text');
+  const text   = ta.value;
+  const cursor = ta.selectionStart;
+  const before = text.slice(0, cursor).replace(/@\w*$/, '');
+  const after  = text.slice(cursor);
+  ta.value     = before + '@' + name + ' ' + after;
+  document.getElementById('tablon-mentions').style.display = 'none';
+  ta.focus();
+}
+
+function onDestTypeChange() {
+  const type = document.getElementById('tablon-dest-type').value;
+  const wrap = document.getElementById('tablon-dest-members');
+  if (type === 'specific') {
+    wrap.style.display = 'block';
+    wrap.innerHTML = '<div class="dest-hint">Selecciona los destinatarios:</div>' +
+      TEAM.map(m => `<label class="dest-cb-label">
+        <input type="checkbox" value="${m.name}" class="dest-cb">
+        <span class="dest-cb-name">${m.name}</span>
+        <span class="dest-cb-dept">${m.dept}</span>
+      </label>`).join('');
+  } else {
+    wrap.style.display = 'none';
+  }
+}
+
+function publicarNota() {
+  if (!currentUser) { toast('Inicia sesión primero', 'te'); return; }
+  const texto = document.getElementById('tablon-text').value.trim();
+  if (!texto)  { toast('Escribe algo antes de publicar', 'te'); return; }
+  // Destinatarios
+  const destType = document.getElementById('tablon-dest-type').value;
+  let dest;
+  if (destType === 'all') {
+    dest = 'all';
+  } else {
+    dest = [...document.querySelectorAll('.dest-cb:checked')].map(cb => cb.value);
+    if (dest.length === 0) { toast('Selecciona al menos un destinatario', 'te'); return; }
+  }
+  // Cerrar menú de menciones si estaba abierto
+  document.getElementById('tablon-mentions').style.display = 'none';
+  // Extraer @menciones del texto
+  const rawTags = texto.match(/@([\w ]+?)(?=\s|$|[,\.!?])/g) || [];
+  const tags = [...new Set(rawTags.map(t => t.slice(1).trim()).filter(Boolean))];
+  const member = TEAM.find(m => m.name === currentUser);
+  const nota = {
+    id:     Date.now(),
+    autor:  currentUser,
+    dept:   member ? member.dept : '',
+    texto,
+    tags,
+    dest,
+    ts:     new Date().toISOString(),
+  };
+  NOTAS.unshift(nota);
+  saveNotas();
+  document.getElementById('tablon-text').value = '';
+  document.getElementById('tablon-dest-type').value = 'all';
+  document.getElementById('tablon-dest-members').style.display = 'none';
+  renderTablon();
+  toast('✓ Aviso publicado', 'ts');
+}
+
+function renderTablon() {
+  const feed = document.getElementById('tablon-feed');
+  if (!feed) return;
+  // Filtrar según destinatario: supervisores ven todo; el resto solo ve 'all' o las que incluyan su nombre
+  const visible = NOTAS.filter(n => {
+    if (isSup) return true;               // supervisores ven todo
+    if (!n.dest || n.dest === 'all') return true; // para todo el equipo
+    if (n.autor === currentUser) return true;     // el autor ve la suya
+    return Array.isArray(n.dest) && n.dest.includes(currentUser);
+  });
+  if (visible.length === 0) {
+    feed.innerHTML = '<div class="tablon-empty">No hay avisos todavía. ¡Sé el primero en publicar!</div>';
+    return;
+  }
+  feed.innerHTML = visible.map(n => {
+    const date = new Date(n.ts).toLocaleDateString('es-ES', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+    const textoHtml = (n.texto || '').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/@([\w ]+?)(?=\s|$|[,\.!?])/g, '<span class="mention-tag">@$1</span>');
+    const canDelete = isSup || n.autor === currentUser;
+    // Chip de destinatarios
+    let destChip = '';
+    if (!n.dest || n.dest === 'all') {
+      destChip = '<span class="dest-chip all">📢 Todo el equipo</span>';
+    } else if (Array.isArray(n.dest)) {
+      destChip = n.dest.map(d => `<span class="dest-chip specific">👤 ${d}</span>`).join('');
+    }
+    return `<div class="nota-card">
+      <div class="nota-header">
+        <div class="nota-av">${initials(n.autor)}</div>
+        <div class="nota-meta">
+          <div class="nota-autor">${n.autor}</div>
+          <div class="nota-dept">${n.dept} · ${date}</div>
+        </div>
+        ${canDelete ? `<button class="nota-del" onclick="borrarNota(${n.id})" title="Borrar">×</button>` : ''}
+      </div>
+      <div class="nota-body">${textoHtml}</div>
+      <div class="nota-footer">
+        <div class="nota-dest-chips">${destChip}</div>
+        ${n.tags && n.tags.length ? `<div class="nota-tags">${n.tags.map(t => `<span class="nota-tag-chip">@${t}</span>`).join('')}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function borrarNota(id) {
+  const nota = NOTAS.find(n => n.id === id);
+  if (!nota) return;
+  if (!isSup && nota.autor !== currentUser) return;
+  NOTAS = NOTAS.filter(n => n.id !== id);
+  saveNotas();
+  renderTablon();
+  toast('Aviso eliminado', 'tw2');
+}
+
+// ============================================================
 // ARRANQUE
 // ============================================================
 function init() {
@@ -2766,9 +3120,11 @@ function init() {
   renderEmap();
   initEmailJS();
 
-  // 8. Cargar equipo y departamentos desde localStorage (Firebase los sobreescribirá si hay datos más recientes)
+  // 8. Cargar equipo, departamentos, PINs y notas desde localStorage (Firebase los sobreescribirá si hay datos más recientes)
   loadDepts();
   loadTeam();
+  loadPins();
+  loadNotas();
   renderDeptsCfg();
 
   // 9. checkAuth() — muestra login modal o carga pizarra del usuario
