@@ -1297,16 +1297,6 @@ body::before{
   border-color:var(--teal);
   color:var(--teal-deep);font-weight:700;
 }
-.fch.fch-person{
-  border-radius:20px;
-  font-size:11px;
-  padding:4px 12px;
-}
-.fch.fch-person.active-mine{
-  background:linear-gradient(135deg,var(--teal),#0099a8);
-  color:#fff;
-  border-color:var(--teal);
-}
 
 /* ── PERFILES PAGE ── */
 .profiles-wrap{padding:20px 22px}
@@ -1746,7 +1736,6 @@ let isSup       = false;
 let filterDept  = 'todos';
 let filterUrgent= false;
 let filterMine  = false;
-let filterResp  = '';      // '' = todos, o nombre del supervisor filtrado
 let importBuffer= [];
 let prevStatus  = {};
 let fbDB        = null;
@@ -2009,7 +1998,6 @@ function doLogout() {
   filterMine    = false;
   filterDept    = 'todos';
   filterUrgent  = false;
-  filterResp    = '';
   document.getElementById('sessAv').textContent   = '--';
   document.getElementById('sessName').textContent = '—';
   document.getElementById('loginSelect').value    = '';
@@ -2069,26 +2057,19 @@ function gp(name, el) {
 // ============================================================
 function getVisibleTasks() {
   let result = tasks;
-  // Supervisor ve todo; el resto filtra por su nombre cuando filterMine está activo
-  if (filterMine && currentUser && !isSup) {
+  if (filterMine && currentUser) {
     const first = currentUser.split(' ')[0].toLowerCase();
     result = result.filter(t => t.resp && t.resp.toLowerCase().includes(first));
-  }
-  // Filtro por responsable (supervisores)
-  if (filterResp) {
-    const rFirst = filterResp.split(' ')[0].toLowerCase();
-    result = result.filter(t => t.resp && t.resp.toLowerCase().includes(rFirst));
   }
   if (filterDept !== 'todos') result = result.filter(t => t.dept === filterDept);
   if (filterUrgent)           result = result.filter(t => t.prio === 'Urgente' && t.estado !== 'Completado');
   return result;
 }
 
-function setFilterMine()     { filterMine = true;  filterDept = 'todos'; filterUrgent = false; filterResp = ''; renderBoard(); }
-function setFilterAll()      { filterMine = false; filterDept = 'todos'; filterUrgent = false; filterResp = ''; renderBoard(); }
-function setFilterDept(d)    { filterDept = d; filterUrgent = false; filterResp = ''; renderBoard(); }
-function setFilterResp(name) { filterResp = filterResp === name ? '' : name; filterDept = 'todos'; filterUrgent = false; filterMine = false; renderBoard(); }
-function toggleUrgent()      { filterUrgent = !filterUrgent; if (filterUrgent) filterDept = 'todos'; renderBoard(); }
+function setFilterMine()     { filterMine = true;  filterDept = 'todos'; filterUrgent = false; renderBoard(); }
+function setFilterAll()      { filterMine = false; filterDept = 'todos'; filterUrgent = false; renderBoard(); }
+function setFilterDept(d)    { filterDept = d; filterUrgent = false; filterMine = false; renderBoard(); }
+function toggleUrgent()      { filterUrgent = !filterUrgent; if (filterUrgent) { filterDept = 'todos'; filterMine = false; } renderBoard(); }
 
 // ============================================================
 // KANBAN
@@ -2114,22 +2095,14 @@ function renderBoard() {
   ].map(s => `<div class="sc ${s.cls}"><div class="sn ${s.nc}">${s.n}</div><div class="sl">${s.l}</div></div>`).join('');
 
   // Filter bar
-  const SUPS_FILTER = ['Alejandro Meneses', 'Junior De Freitas', 'Diana Da Maia', 'Miguel Pereira'];
   let fhtml = '<span class="flbl">Filtrar:</span>';
-  if (!isSup && currentUser) {
+  if (currentUser) {
     fhtml += `<button class="fch ${filterMine ? 'active-mine' : ''}" onclick="setFilterMine()">⭐ Mis tareas</button>`;
-    fhtml += `<button class="fch ${!filterMine && !filterResp ? 'on' : ''}" onclick="setFilterAll()">Ver todo el equipo</button>`;
-  } else {
-    fhtml += ['todos', ...Object.keys(DEPTS)].map(d =>
-      `<button class="fch ${d === filterDept && !filterUrgent && !filterResp ? 'on' : ''}" onclick="setFilterDept('${d}')">${d === 'todos' ? 'Todos' : d}</button>`
-    ).join('');
+    fhtml += `<button class="fch ${!filterMine && filterDept === 'todos' && !filterUrgent ? 'on' : ''}" onclick="setFilterAll()">Ver todo el equipo</button>`;
   }
-  fhtml += `<span class="flbl" style="margin-left:10px">Por persona:</span>`;
-  fhtml += SUPS_FILTER.map(name => {
-    const short = name.split(' ')[0];
-    const active = filterResp === name;
-    return `<button class="fch fch-person ${active ? 'active-mine' : ''}" onclick="setFilterResp('${name}')">${short}</button>`;
-  }).join('');
+  fhtml += ['todos', ...Object.keys(DEPTS)].filter(d => d !== 'todos' || !currentUser).map(d =>
+    `<button class="fch ${d === filterDept && !filterUrgent && !filterMine ? 'on' : ''}" onclick="setFilterDept('${d}')">${d === 'todos' ? 'Todos' : d}</button>`
+  ).join('');
   fhtml += `<button class="fch ${filterUrgent ? 'uo' : ''}" onclick="toggleUrgent()">⚡ Urgentes</button>`;
   document.getElementById('fbar').innerHTML = fhtml;
 
